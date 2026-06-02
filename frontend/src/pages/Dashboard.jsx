@@ -5,7 +5,7 @@ import {
   RiLinkM, RiBarChartLine, RiDeleteBin6Line, RiFileCopyLine,
   RiCheckLine, RiAddLine, RiQrCodeLine, RiDownloadLine,
   RiEditLine, RiCloseLine, RiUploadCloud2Line, RiExternalLinkLine,
-  RiTimeLine, RiEyeLine, RiGlobalLine, RiShieldLine,
+  RiTimeLine, RiGlobalLine, RiShieldLine,
   RiFlashlightLine, RiArrowRightLine, RiMenuLine,
 } from 'react-icons/ri';
 import { QRCodeSVG } from 'qrcode.react';
@@ -182,7 +182,7 @@ function EditModal({ url, onClose, onSave, showToast }) {
             <label className="input-label">Expiry <span style={{ color: 'var(--text3)', textTransform: 'none', letterSpacing: 0 }}>(optional)</span></label>
             <input type="datetime-local" className="snip-input" value={form.expiresAt} onChange={e => setForm({ ...form, expiresAt: e.target.value })} />
           </div>
-          <label className="toggle-row">
+          <label className="toggle-row" onClick={() => setForm({ ...form, isPublic: !form.isPublic })}>
             <div className="toggle-track" style={{ background: form.isPublic ? 'var(--violet)' : 'rgba(255,255,255,0.1)' }}>
               <div className="toggle-thumb" style={{ transform: form.isPublic ? 'translateX(18px)' : 'translateX(0)' }} />
             </div>
@@ -278,7 +278,7 @@ function BulkModal({ onClose, onDone, showToast }) {
         const seenAliases = new Set();
 
         const validated = data.map((r, index) => {
-          const originalUrl = (r.url || r.originalUrl || r.URL || '').trim();
+          const originalUrl = (r.url || r.originalUrl || r.original_url || r.URL || r.long_url || r.destination || r.link || r.target_url || r.source_url || '').trim();
           const alias = (r.alias || r.Alias || '').trim();
           const expiresAt = (r.expiresAt || r.expires || '').trim();
 
@@ -377,7 +377,7 @@ function BulkModal({ onClose, onDone, showToast }) {
                 {rows.length > 0 ? `${rows.length} rows loaded ✓` : 'Drop CSV or click to browse'}
               </div>
               <div style={{ fontSize: '0.75rem', color: 'var(--text3)' }}>
-                Columns: <code style={{ color: 'var(--violet-l)' }}>url</code>, <code style={{ color: 'var(--cyan)' }}>alias</code>, <code style={{ color: 'var(--amber)' }}>expiresAt</code>
+                Columns: <code style={{ color: 'var(--violet-l)' }}>url</code> <span style={{ color: 'var(--text3)', fontSize: '0.65rem' }}>(or original_url)</span>, <code style={{ color: 'var(--cyan)' }}>alias</code>, <code style={{ color: 'var(--amber)' }}>expiresAt</code>
               </div>
               <input ref={fileRef} type="file" accept=".csv" style={{ display: 'none' }} onChange={e => parseFile(e.target.files[0])} />
             </div>
@@ -492,7 +492,6 @@ function UrlCard({ url, onCopy, onDelete, onQR, onEdit, navigate, copied }) {
             {link.replace(/^https?:\/\//, '')}
           </a>
           {url.alias && <span className="pill pill-violet">alias</span>}
-          {url.isPublic && <span className="pill pill-cyan">public</span>}
           {isExpired && <span className="pill pill-rose">expired</span>}
           {isSoon && !isExpired && <span className="pill pill-amber">expires soon</span>}
         </div>
@@ -586,9 +585,8 @@ function CreateForm({ onCreated, showToast }) {
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
-          <label className="toggle-row">
-            <div className="toggle-track" style={{ background: form.isPublic ? 'var(--violet)' : 'rgba(255,255,255,0.1)' }}
-              onClick={() => setForm({ ...form, isPublic: !form.isPublic })}>
+          <label className="toggle-row" onClick={() => setForm({ ...form, isPublic: !form.isPublic })}>
+            <div className="toggle-track" style={{ background: form.isPublic ? 'var(--violet)' : 'rgba(255,255,255,0.1)' }}>
               <div className="toggle-thumb" style={{ transform: form.isPublic ? 'translateX(18px)' : 'translateX(0)' }} />
             </div>
             <span style={{ fontSize: '0.8rem', color: 'var(--text2)' }}>Public stats</span>

@@ -134,19 +134,33 @@ export const bulkCreateUrls = async (req, res) => {
         continue;
       }
       try {
-        let alias = null;
-        if (item.alias && isAliasValid(item.alias) && !RESERVED.includes(item.alias.toLowerCase())) {
-          const exists = await Url.findOne({ $or: [{ shortCode: item.alias }, { alias: item.alias }] });
-          if (!exists) alias = item.alias;
-        }
-        const doc = await Url.create({
+        // Build the document — only include alias if it's actually valid & available
+        const docData = {
           originalUrl: item.originalUrl,
-          shortCode: nanoid(7),
-          alias,
           userId: req.user.id,
           expiresAt: item.expiresAt ? new Date(item.expiresAt) : null,
           isPublic: false,
-        });
+        };
+
+        // Generate a unique shortCode (avoid collisions)
+        let shortCode;
+        let codeExists;
+        do {
+          shortCode = nanoid(7);
+          codeExists = await Url.findOne({ shortCode });
+        } while (codeExists);
+        docData.shortCode = shortCode;
+
+        // Only set alias when provided and valid — never set alias to null
+        // (setting alias: null causes duplicate key errors on the sparse unique index)
+        if (item.alias && isAliasValid(item.alias) && !RESERVED.includes(item.alias.toLowerCase())) {
+          const aliasExists = await Url.findOne({ $or: [{ shortCode: item.alias }, { alias: item.alias }] });
+          if (!aliasExists) {
+            docData.alias = item.alias;
+          }
+        }
+
+        const doc = await Url.create(docData);
         results.push({ originalUrl: item.originalUrl, shortCode: doc.shortCode, alias: doc.alias });
       } catch {
         results.push({ originalUrl: item.originalUrl, error: 'Failed to create' });
@@ -203,7 +217,7 @@ export const editUrl = async (req, res) => {
 
     if (alias !== undefined) {
       if (alias === null || alias === '') {
-        url.alias = null;
+        url.alias = undefined;
       } else {
         if (!isAliasValid(alias))
           return res.status(400).json({ message: 'Invalid alias format' });

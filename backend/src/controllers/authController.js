@@ -2,7 +2,10 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
+import { OAuth2Client } from 'google-auth-library';
 import User from '../models/User.js';
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const generateToken = (userId) =>
   jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '7d' });
@@ -138,5 +141,50 @@ export const resetPassword = async (req, res) => {
     res.json({ message: 'Password reset successful' });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+export const googleLogin = async (req, res) => {
+  try {
+    const { token } = req.body;
+    if (!token) {
+      return res.status(400).json({ message: 'Google token is required' });
+    }
+
+    // Verify Google ID token
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const { sub: googleId, email, name } = payload;
+
+    if (!email) {
+      return res.status(400).json({ message: 'Google account has no email address' });
+    }
+
+    // Find or create user
+    let user = await User.findOne({ email });
+
+    if (user) {
+      if (!user.googleId) {
+        user.googleId = googleId;
+        await user.save();
+      }
+    } else {
+      user = await User.create({
+        name,
+        email,
+        googleId,
+      });
+    }
+
+    res.json({
+      token: generateToken(user._id),
+      user: { id: user._id, name: user.name, email: user.email },
+    });
+  } catch (err) {
+    res.status(500).json({ message: 'Google authentication failed', error: err.message });
   }
 };

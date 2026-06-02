@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
 import api from '../api/axios';
+import { useAuth } from '../context/AuthContext';
 import Toast from '../components/Toast';
 import './Auth.css';
 
@@ -27,6 +29,7 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(null);
   const [mounted, setMounted] = useState(false);
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => { setTimeout(() => setMounted(true), 50); }, []);
@@ -61,6 +64,23 @@ export default function Register() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setLoading(true);
+    try {
+      const { data } = await api.post('/api/auth/google', { token: credentialResponse.credential });
+      login(data.user, data.token);
+      navigate('/dashboard');
+    } catch (err) {
+      setToast({ message: err.response?.data?.message || 'Google registration failed', type: 'error' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleError = () => {
+    setToast({ message: 'Google authentication failed', type: 'error' });
   };
 
   const getInputClass = (valid) => {
@@ -212,6 +232,16 @@ export default function Register() {
                 ) : '→ Create Account'}
               </button>
             </form>
+
+            <div className="google-login-wrapper">
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleError}
+                theme="filled_black"
+                shape="rectangular"
+                width="280px"
+              />
+            </div>
 
             {/* Divider */}
             <div className="auth-divider">

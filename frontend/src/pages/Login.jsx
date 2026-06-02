@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import Toast from '../components/Toast';
@@ -91,6 +92,23 @@ export default function Login() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setLoading(true);
+    try {
+      const { data } = await api.post('/api/auth/google', { token: credentialResponse.credential });
+      login(data.user, data.token);
+      navigate('/dashboard');
+    } catch (err) {
+      setToast({ message: err.response?.data?.message || 'Google login failed', type: 'error' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleError = () => {
+    setToast({ message: 'Google authentication failed', type: 'error' });
   };
 
   return (
@@ -191,6 +209,21 @@ export default function Login() {
                 </button>
               </div>
             </form>
+
+            <div className="google-login-wrapper" style={{
+              display: 'flex',
+              justifyContent: 'center',
+              margin: '1.2rem 0 0.5rem 0',
+              animation: mounted ? 'fade-up-delayed 0.6s 0.32s ease both' : 'none'
+            }}>
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleError}
+                theme="filled_black"
+                shape="rectangular"
+                width="280px"
+              />
+            </div>
 
             {/* Divider */}
             <div className="auth-divider" style={{

@@ -16,13 +16,42 @@ Chart.register(...registerables);
 
 const BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
+/* ── Theme helper ── */
+function useCurrentTheme() {
+  const [theme, setTheme] = useState(() =>
+    document.documentElement.getAttribute('data-theme') || 'dark'
+  );
+  useEffect(() => {
+    const obs = new MutationObserver(() => {
+      setTheme(document.documentElement.getAttribute('data-theme') || 'dark');
+    });
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    return () => obs.disconnect();
+  }, []);
+  return theme;
+}
+
+const themeColors = (theme) => ({
+  gridColor: theme === 'light' ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.03)',
+  tickColor: theme === 'light' ? '#64748b' : '#4a4a6a',
+  tooltipBg: theme === 'light' ? '#ffffff' : '#1a1a26',
+  tooltipBorder: theme === 'light' ? 'rgba(124,58,237,0.2)' : 'rgba(255,255,255,0.1)',
+  tooltipTitle: theme === 'light' ? '#0f172a' : '#f0f0f8',
+  tooltipBody: theme === 'light' ? '#475569' : '#9898b8',
+  donutBorder: theme === 'light' ? '#ffffff' : '#111118',
+  barGradStart: theme === 'light' ? 'rgba(6,182,212,0.7)' : 'rgba(34,211,238,0.8)',
+  barGradEnd: theme === 'light' ? 'rgba(6,182,212,0.03)' : 'rgba(34,211,238,0.05)',
+  barBorder: theme === 'light' ? 'rgba(6,182,212,0.8)' : 'rgba(34,211,238,0.9)',
+});
+
 /* ── Skeleton ── */
 const Sk = ({ className }) => <div className={`skeleton ${className}`} />;
 
 /* ── Donut Chart ── */
-function DonutChart({ data, colors }) {
+function DonutChart({ data, colors, theme }) {
   const ref = useRef(null);
   const inst = useRef(null);
+  const tc = themeColors(theme);
 
   useEffect(() => {
     if (!data?.length || !ref.current) return;
@@ -35,7 +64,7 @@ function DonutChart({ data, colors }) {
         datasets: [{
           data: data.map((d) => d.count),
           backgroundColor: colors,
-          borderColor: '#111118',
+          borderColor: tc.donutBorder,
           borderWidth: 3,
           hoverBorderWidth: 0,
         }],
@@ -49,17 +78,17 @@ function DonutChart({ data, colors }) {
             callbacks: {
               label: (ctx) => ` ${ctx.label}: ${ctx.raw} (${Math.round(ctx.raw / total * 100)}%)`,
             },
-            backgroundColor: '#1a1a26',
-            borderColor: 'rgba(255,255,255,0.1)',
+            backgroundColor: tc.tooltipBg,
+            borderColor: tc.tooltipBorder,
             borderWidth: 1,
-            titleColor: '#f0f0f8',
-            bodyColor: '#9898b8',
+            titleColor: tc.tooltipTitle,
+            bodyColor: tc.tooltipBody,
           },
         },
       },
     });
     return () => inst.current?.destroy();
-  }, [data, colors]);
+  }, [data, colors, theme]);
 
   if (!data?.length) return <p className="text-center text-xs py-6" style={{ color: 'var(--text-muted)' }}>No data yet</p>;
 
@@ -83,9 +112,10 @@ function DonutChart({ data, colors }) {
 }
 
 /* ── Click trend chart ── */
-function DailyChart({ chartData }) {
+function DailyChart({ chartData, theme }) {
   const ref = useRef(null);
   const inst = useRef(null);
+  const tc = themeColors(theme);
 
   useEffect(() => {
     if (!chartData || !ref.current) return;
@@ -104,11 +134,11 @@ function DailyChart({ chartData }) {
           data: chartData.data,
           backgroundColor: (ctx) => {
             const grad = ctx.chart.ctx.createLinearGradient(0, 0, 0, 220);
-            grad.addColorStop(0, 'rgba(34,211,238,0.8)');
-            grad.addColorStop(1, 'rgba(34,211,238,0.05)');
+            grad.addColorStop(0, tc.barGradStart);
+            grad.addColorStop(1, tc.barGradEnd);
             return grad;
           },
-          borderColor: 'rgba(34,211,238,0.9)',
+          borderColor: tc.barBorder,
           borderWidth: 1,
           borderRadius: 6,
           borderSkipped: false,
@@ -119,21 +149,21 @@ function DailyChart({ chartData }) {
         plugins: {
           legend: { display: false },
           tooltip: {
-            backgroundColor: '#1a1a26',
-            borderColor: 'rgba(34,211,238,0.4)',
+            backgroundColor: tc.tooltipBg,
+            borderColor: tc.tooltipBorder,
             borderWidth: 1,
-            titleColor: '#f0f0f8',
-            bodyColor: '#9898b8',
+            titleColor: tc.tooltipTitle,
+            bodyColor: tc.tooltipBody,
           },
         },
         scales: {
-          x: { ticks: { color: '#4a4a6a', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.03)' } },
-          y: { ticks: { color: '#4a4a6a', stepSize: 1, font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.03)' }, beginAtZero: true },
+          x: { ticks: { color: tc.tickColor, font: { size: 10 } }, grid: { color: tc.gridColor } },
+          y: { ticks: { color: tc.tickColor, stepSize: 1, font: { size: 10 } }, grid: { color: tc.gridColor }, beginAtZero: true },
         },
       },
     });
     return () => inst.current?.destroy();
-  }, [chartData]);
+  }, [chartData, theme]);
 
   return <canvas ref={ref} height={70} />;
 }
@@ -174,6 +204,7 @@ export default function PublicStats() {
   const [error, setError] = useState(null);
   const [copied, setCopied] = useState(false);
   const [toast, setToast] = useState(null);
+  const theme = useCurrentTheme();
 
   useEffect(() => {
     api.get(`/api/url/public/stats/${shortCode}`)
@@ -230,11 +261,11 @@ export default function PublicStats() {
             <Sk className="h-64 rounded-2xl" />
           </div>
         ) : error ? (
-          <div className="glass-card p-10 max-w-sm w-full text-center" style={{ margin: '4rem auto' }}>
+          <div className="glass-card" style={{ margin: '4rem auto', maxWidth: 400, padding: '3rem 2rem', textAlign: 'center' }}>
             <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>🔒</div>
             <h2 style={{ fontFamily: 'var(--font-d)', fontSize: '1.2rem', marginBottom: '0.5rem' }}>Link not found</h2>
-            <p className="text-sm mb-6" style={{ color: 'var(--text-secondary)' }}>{error}</p>
-            <Link to="/public-links" className="btn btn-primary w-full justify-center">Go to Public Links</Link>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '1.5rem' }}>{error}</p>
+            <Link to="/public-links" className="back-btn-public" style={{ display: 'inline-flex' }}>Go to Public Links</Link>
           </div>
         ) : (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -253,7 +284,7 @@ export default function PublicStats() {
                   <p className="public-info-originallink">{data.url.originalUrl}</p>
                 </div>
                 <div style={{ flexShrink: 0 }}>
-                  <motion.button whileTap={{ scale: 0.93 }} onClick={handleCopy} className="btn btn-secondary" style={{ padding: '0.6rem 1.2rem' }}>
+                  <motion.button whileTap={{ scale: 0.93 }} onClick={handleCopy} className="copy-btn-public" style={{ padding: '0.6rem 1.2rem' }}>
                     <AnimatePresence mode="wait">
                       {copied
                         ? <motion.span key="c" initial={{ scale: 0 }} animate={{ scale: 1 }} style={{ display: 'inline-flex', marginRight: '4px' }}><RiCheckLine style={{ color: 'var(--emerald)' }} /></motion.span>
@@ -294,7 +325,7 @@ export default function PublicStats() {
                   </span>
                 )}
               </div>
-              <DailyChart chartData={data.chartData} />
+              <DailyChart chartData={data.chartData} theme={theme} />
             </div>
 
             {/* Breakdown statistics */}
@@ -312,7 +343,7 @@ export default function PublicStats() {
                     <span style={{ color: 'var(--text-secondary)', display: 'inline-flex' }}>{chart.icon}</span>
                     <h3 style={{ fontSize: '0.8rem', fontWeight: 700, fontFamily: 'var(--font-d)' }}>{chart.title}</h3>
                   </div>
-                  <DonutChart data={data.breakdown[chart.key]} colors={chart.colors} />
+                  <DonutChart data={data.breakdown[chart.key]} colors={chart.colors} theme={theme} />
                 </motion.div>
               ))}
             </div>
@@ -321,7 +352,7 @@ export default function PublicStats() {
             <div className="glass-card" style={{ padding: '1.5rem' }}>
               <h2 style={{ fontFamily: 'var(--font-d)', fontWeight: 750, fontSize: '1.1rem', marginBottom: '1.25rem' }}>Recent Visitor History</h2>
               {data.recentVisits.length === 0 ? (
-                <p className="text-center text-sm py-8" style={{ color: 'var(--text-muted)' }}>No visits recorded yet</p>
+                <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '2rem 0', fontSize: '0.85rem' }}>No visits recorded yet</p>
               ) : (
                 <div className="timeline-wrap">
                   {data.recentVisits.map((v, i) => (
@@ -331,9 +362,9 @@ export default function PublicStats() {
               )}
             </div>
 
-            <div className="text-center pt-2 pb-6">
-              <p className="text-sm mb-3" style={{ color: 'var(--text-secondary)' }}>Want to shorten your own URLs and track custom stats?</p>
-              <Link to="/register" className="btn btn-primary inline-flex" style={{ padding: '0.65rem 1.4rem' }}>
+            <div style={{ textAlign: 'center', padding: '0.5rem 0 1.5rem' }}>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '0.75rem' }}>Want to shorten your own URLs and track custom stats?</p>
+              <Link to="/register" className="cta-register-btn">
                 Create Free Account
               </Link>
             </div>
