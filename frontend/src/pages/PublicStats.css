@@ -1,0 +1,218 @@
+.public-stats-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem;
+}
+
+.back-btn-public {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.15s ease;
+  margin-bottom: 1.5rem;
+  padding: 0;
+}
+
+.back-btn-public:hover {
+  color: var(--violet-l);
+}
+
+.public-info-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.public-info-details {
+  min-width: 0;
+  flex: 1;
+}
+
+.public-info-shortlink {
+  font-family: var(--font-m);
+  font-weight: 700;
+  font-size: 1.35rem;
+  transition: color 0.2s;
+  text-decoration: none;
+  color: var(--violet-l);
+  display: inline-block;
+  margin-bottom: 0.35rem;
+  word-break: break-all;
+}
+
+.public-info-shortlink:hover {
+  color: var(--cyan);
+  text-decoration: underline;
+}
+
+.public-info-originallink {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  word-break: break-all;
+  line-height: 1.5;
+}
+
+/* Stats Cards Grid 4 Columns */
+.public-stats-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 900px) {
+  .public-stats-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .public-stats-grid-4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.section-subtitle-public {
+  font-family: var(--font-d);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Breakdown Grid (5 Donut charts) */
+.public-breakdown-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 960px) {
+  .public-breakdown-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .public-breakdown-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Donut Chart Layout for Public Stats */
+.donut-chart-wrap-public {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.25rem;
+}
+
+.donut-legend-public {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.donut-legend-item-public {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.donut-legend-dot-public {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.donut-legend-label-public {
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.donut-legend-pct-public {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  flex-shrink: 0;
+}
+
+/* Visitor Timeline styling for Public page */
+.timeline-item-public {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.timeline-track-public {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.timeline-bullet-public {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  margin-top: 0.35rem;
+  background: var(--cyan);
+  box-shadow: 0 0 5px var(--cyan);
+  flex-shrink: 0;
+}
+
+.timeline-connector-public {
+  width: 1px;
+  flex: 1;
+  margin-top: 0.25rem;
+  background: var(--border);
+}
+
+.timeline-content-public {
+  padding-bottom: 0.75rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.timeline-header-public {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.15rem;
+}
+
+.timeline-time-public {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.timeline-meta-public {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+}
+
+.timeline-meta-item-public {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}

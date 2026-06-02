@@ -18,6 +18,7 @@ app.use(express.json());
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/url', urlRoutes);
+app.use('/api/urls', urlRoutes);
 app.use('/api/analytics', analyticsRoutes);
 
 // Redirect route — must be LAST

@@ -245,10 +245,11 @@ export const redirectUrl = async (req, res) => {
     // Parse UA + get geo (non-blocking)
     const ua = req.headers['user-agent'] || '';
     const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.ip || '';
+    const referrer = req.headers.referer || req.headers.referrer || 'Direct';
     const { browser, os, device } = parseUserAgent(ua);
 
     getGeoInfo(ip).then(({ country, city }) => {
-      Visit.create({ urlId: url._id, ip, userAgent: ua, browser, os, device, country, city }).catch(() => {});
+      Visit.create({ urlId: url._id, ip, userAgent: ua, browser, os, device, country, city, referrer }).catch(() => {});
     });
 
     res.redirect(url.originalUrl);
@@ -268,8 +269,66 @@ export const getPublicStats = async (req, res) => {
 
     if (!url) return res.status(404).json({ message: 'Not found or not public' });
 
-    const visits = await Visit.find({ urlId: url._id }).sort({ timestamp: -1 }).limit(20);
-    res.json({ url, totalClicks: url.clickCount, recentVisits: visits });
+    const visits = await Visit.find({ urlId: url._id }).sort({ timestamp: -1 });
+
+    const buildDays = (n = 30) => {
+      const now = new Date();
+      return Array.from({ length: n }, (_, i) => {
+        const d = new Date(now);
+        d.setDate(d.getDate() - (n - 1 - i));
+        return d.toISOString().slice(0, 10);
+      });
+    };
+
+    const countBy = (arr, key) => {
+      const map = {};
+      arr.forEach((v) => {
+        const val = v[key] || 'Unknown';
+        map[val] = (map[val] || 0) + 1;
+      });
+      return Object.entries(map)
+        .map(([name, count]) => ({ name, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 8);
+    };
+
+    const days30 = buildDays(30);
+    const clicksByDay = {};
+    days30.forEach((d) => (clicksByDay[d] = 0));
+    visits.forEach((v) => {
+      const day = new Date(v.timestamp).toISOString().slice(0, 10);
+      if (clicksByDay[day] !== undefined) clicksByDay[day]++;
+    });
+
+    res.json({
+      url,
+      totalClicks: url.clickCount,
+      lastVisited: visits[0]?.timestamp || null,
+      recentVisits: visits.slice(0, 20),
+      chartData: {
+        labels: days30,
+        data: days30.map((d) => clicksByDay[d]),
+      },
+      breakdown: {
+        browsers:  countBy(visits, 'browser'),
+        os:        countBy(visits, 'os'),
+        devices:   countBy(visits, 'device'),
+        countries: countBy(visits, 'country'),
+        referrers: countBy(visits, 'referrer'),
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+/* ── PUBLIC LINKS (no auth) ── */
+export const getPublicUrls = async (req, res) => {
+  try {
+    const urls = await Url.find({ isPublic: true })
+      .select('-userId')
+      .sort({ createdAt: -1 });
+    res.json(urls);
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
   }

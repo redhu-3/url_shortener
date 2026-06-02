@@ -21,6 +21,7 @@ const visitSchema = new mongoose.Schema({
   device:    { type: String, default: 'Desktop' },
   country:   { type: String, default: 'Unknown' },
   city:      { type: String, default: 'Unknown' },
+  referrer:  { type: String, default: 'Direct' },
   timestamp: { type: Date, default: Date.now },
 });
 
