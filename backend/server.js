@@ -14,8 +14,8 @@ const app = express();
 
 // Allow both production (Vercel) and local dev origins
 const allowedOrigins = [
-  process.env.FRONTEND_URL,
-  'http://localhost:5173',
+  process.env.FRONTEND_URL || 'https://url-shortener-gi759esmc-redhudarsini3-9642s-projects.vercel.app',
+  'http://localhost:5173', // kept for local development only
 ].filter(Boolean);
 
 app.use(cors({

@@ -7,7 +7,7 @@ import Navbar from '../components/Navbar';
 import Toast from '../components/Toast';
 import './PublicLinks.css';
 
-const BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const BASE = import.meta.env.VITE_API_URL || 'https://url-shortener-1-mxet.onrender.com';
 const shortUrl = (url) => `${BASE}/${url.alias || url.shortCode}`;
 const fmt = (d) => new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 const truncate = (s, n = 55) => s?.length > n ? s.slice(0, n) + '…' : s;

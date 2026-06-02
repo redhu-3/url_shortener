@@ -14,7 +14,7 @@ import './Analytics.css';
 
 Chart.register(...registerables);
 
-const BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const BASE = import.meta.env.VITE_API_URL || 'https://url-shortener-1-mxet.onrender.com';
 
 /* ── Skeleton ── */
 const Sk = ({ className }) => <div className={`skeleton ${className}`} />;

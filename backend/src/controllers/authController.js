@@ -75,7 +75,7 @@ export const forgotPassword = async (req, res) => {
     await user.save();
 
     // Create reset url
-    const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password/${resetToken}`;
+    const resetUrl = `${process.env.FRONTEND_URL || 'https://url-shortener-gi759esmc-redhudarsini3-9642s-projects.vercel.app'}/reset-password/${resetToken}`;
 
     // Send email via Nodemailer
     const transporter = nodemailer.createTransport({
