@@ -10,12 +10,13 @@ import { redirectUrl } from './src/controllers/urlController.js';
 
 dotenv.config();
 
+
 const app = express();
 
 // Allow both production (Vercel) and local dev origins
 const allowedOrigins = [
-  process.env.FRONTEND_URL || 'https://url-shortener-gi759esmc-redhudarsini3-9642s-projects.vercel.app',
-  'http://localhost:5173', // kept for local development only
+  process.env.FRONTEND_URL || 'https://url-shortener-snowy-iota.vercel.app',
+  'http://localhost:5173', 
 ].filter(Boolean);
 
 app.use(cors({

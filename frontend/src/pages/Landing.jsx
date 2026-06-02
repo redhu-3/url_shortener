@@ -1,6 +1,6 @@
+
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import './Landing.css';
 
 /* ── Animated floating particle background (retained, recolored) ── */
 function ParticleField({ dark }) {
@@ -74,7 +74,7 @@ function ParticleField({ dark }) {
   );
 }
 
-/* ── Typewriter effect ── */
+/* ── Typewriter effect (unchanged) ── */
 function Typewriter({ words }) {
   const [idx, setIdx] = useState(0);
   const [displayed, setDisplayed] = useState('');
@@ -103,7 +103,7 @@ function Typewriter({ words }) {
   );
 }
 
-/* ── Animated counter ── */
+/* ── Animated counter (unchanged) ── */
 function Counter({ target, duration = 1500, suffix = '' }) {
   const [val, setVal] = useState(0);
   const ref = useRef(null);
@@ -128,23 +128,62 @@ function Counter({ target, duration = 1500, suffix = '' }) {
   return <span ref={ref}>{val.toLocaleString()}{suffix}</span>;
 }
 
-/* ── Feature card ── */
-function FeatureCard({ icon, title, desc, delay }) {
+/* ── Feature card (restyled) ── */
+function FeatureCard({ icon, title, desc, delay, dark }) {
   return (
     <div
-      className="feature-card"
-      style={{ animationDelay: delay }}
+      style={{
+        background: dark
+          ? 'linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)'
+          : 'linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(250,250,255,0.8) 100%)',
+        border: `1px solid ${dark ? 'rgba(168,85,247,0.22)' : 'rgba(124,58,237,0.18)'}`,
+        borderRadius: 22,
+        padding: '2rem',
+        animation: `fadeUp 0.6s ease both`,
+        animationDelay: delay,
+        transition: 'transform 280ms cubic-bezier(.2,.8,.2,1), box-shadow 280ms, border-color 280ms',
+        cursor: 'default',
+        boxShadow: dark
+          ? '0 8px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.05)'
+          : '0 12px 30px rgba(124,58,237,0.12), inset 0 1px 0 rgba(255,255,255,0.8)',
+        backdropFilter: 'blur(10px)',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = 'translateY(-8px) scale(1.01)';
+        e.currentTarget.style.boxShadow = dark
+          ? '0 18px 60px rgba(168,85,247,0.22), 0 10px 30px rgba(0,0,0,0.45)'
+          : '0 22px 60px rgba(124,58,237,0.18), 0 12px 30px rgba(0,0,0,0.08)';
+        e.currentTarget.style.borderColor = 'var(--accentSoft)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = 'translateY(0) scale(1)';
+        e.currentTarget.style.boxShadow = dark
+          ? '0 8px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.05)'
+          : '0 12px 30px rgba(124,58,237,0.12), inset 0 1px 0 rgba(255,255,255,0.8)';
+        e.currentTarget.style.borderColor = dark ? 'rgba(168,85,247,0.22)' : 'rgba(124,58,237,0.18)';
+      }}
     >
-      <div className="feature-card-icon">
+      <div style={{
+        width: 56, height: 56, borderRadius: 16,
+        background: 'var(--chipBg)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontSize: 26, marginBottom: '1.1rem',
+        boxShadow: 'inset 0 0 14px rgba(124,58,237,0.18)',
+      }}>
         {icon}
       </div>
-      <h3 className="feature-card-title">{title}</h3>
-      <p className="feature-card-desc">{desc}</p>
+      <h3 style={{
+        fontSize: '1.15rem', fontWeight: 800, marginBottom: '0.5rem',
+        fontFamily: "'Sora', 'Geist', system-ui, sans-serif",
+        color: 'var(--heading)',
+        letterSpacing: '-0.01em',
+      }}>{title}</h3>
+      <p style={{ fontSize: '0.92rem', lineHeight: 1.8, color: 'var(--mutedStrong)', margin: 0 }}>{desc}</p>
     </div>
   );
 }
 
-/* ── Mock URL demo card ── */
+/* ── Mock URL demo card (restyled) ── */
 function DemoCard({ dark }) {
   const [url, setUrl] = useState('');
   const [result, setResult] = useState(null);
@@ -161,45 +200,130 @@ function DemoCard({ dark }) {
   };
 
   return (
-    <div className="demo-card">
-      <div className="demo-card-shine" />
-      <div className="demo-card-header">
-        <div className="demo-card-dot demo-card-dot-red" />
-        <div className="demo-card-dot demo-card-dot-yellow" />
-        <div className="demo-card-dot demo-card-dot-green" />
-        <span className="demo-card-header-title">
+    <div style={{
+      position: 'relative',
+      background: dark
+        ? 'linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 100%)'
+        : 'linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(250,250,255,0.9) 100%)',
+      border: `1px solid ${dark ? 'rgba(168,85,247,0.35)' : 'rgba(124,58,237,0.2)'}`,
+      borderRadius: 26,
+      padding: '2rem',
+      boxShadow: dark
+        ? '0 20px 70px rgba(0,0,0,0.55), 0 0 100px rgba(168,85,247,0.18)'
+        : '0 24px 80px rgba(124,58,237,0.16), 0 8px 60px rgba(0,0,0,0.08)',
+      animation: 'float 6s ease-in-out infinite, fadeUp 0.8s 0.3s ease both',
+      maxWidth: 520,
+      width: '100%',
+      overflow: 'hidden',
+      backdropFilter: 'blur(14px)',
+    }}>
+      {/* Shine */}
+      <div style={{
+        position: 'absolute', inset: 0, pointerEvents: 'none',
+        background: 'linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.08) 40%, transparent 60%)',
+        transform: 'translateX(-100%)',
+        animation: 'shine 4.5s ease-in-out infinite',
+      }} />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: '1.2rem' }}>
+        {['#ff5f57','#febc2e','#28c840'].map((c) => (
+          <div key={c} style={{ width: 12, height: 12, borderRadius: '50%', background: c, boxShadow: `0 0 10px ${c}55` }} />
+        ))}
+        <span style={{ fontSize: '0.78rem', color: 'var(--muted)', marginLeft: 6, fontFamily: 'Geist Mono, ui-monospace, SFMono-Regular, Menlo, monospace', letterSpacing: '0.02em' }}>
           snip.ly — url shortener
         </span>
       </div>
 
-      <label className="demo-card-label">
+      <label style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--muted)', fontWeight: 700 }}>
         Paste your long URL
       </label>
-      <div className="demo-card-form">
+      <div style={{ display: 'flex', gap: 10, marginTop: '0.6rem', marginBottom: '1rem' }}>
         <input
           value={url}
           onChange={(e) => { setUrl(e.target.value); setResult(null); }}
-          placeholder="https://your-very-long-url.com/..."
+          placeholder="[your-very-long-url.com](https://your-very-long-url.com/)"
           onKeyDown={(e) => e.key === 'Enter' && demo()}
-          className="demo-card-input"
+          style={{
+            flex: 1,
+            background: 'var(--inputBg)',
+            border: '1.5px solid var(--inputBorder)',
+            borderRadius: 14,
+            padding: '0.75rem 1rem',
+            color: 'var(--text)',
+            fontSize: '0.95rem',
+            outline: 'none',
+            fontFamily: 'Geist Mono, ui-monospace, SFMono-Regular, Menlo, monospace',
+            transition: 'border-color 200ms, box-shadow 200ms, transform 120ms',
+            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)',
+          }}
+          onFocus={(e) => {
+            e.currentTarget.style.borderColor = 'var(--accent)';
+            e.currentTarget.style.boxShadow = '0 0 0 6px var(--focusRing)';
+            e.currentTarget.style.transform = 'translateY(-1px)';
+          }}
+          onBlur={(e) => {
+            e.currentTarget.style.borderColor = 'var(--inputBorder)';
+            e.currentTarget.style.boxShadow = 'inset 0 1px 0 rgba(255,255,255,0.06)';
+            e.currentTarget.style.transform = 'translateY(0)';
+          }}
         />
         <button
           onClick={demo}
-          disabled={loading}
-          className="demo-card-btn"
+          style={{
+            background: loading ? 'var(--accentSoft)' : 'var(--accentGrad)',
+            backgroundSize: '200% 200%',
+            border: 'none',
+            borderRadius: 14,
+            padding: '0.75rem 1.2rem',
+            color: '#fff',
+            fontWeight: 900,
+            fontSize: '0.95rem',
+            cursor: loading ? 'not-allowed' : 'pointer',
+            transition: 'transform 160ms, box-shadow 160ms, filter 160ms',
+            whiteSpace: 'nowrap',
+            boxShadow: '0 10px 30px rgba(124,58,237,0.35)',
+            animation: 'gradientShift 5s ease infinite',
+          }}
+          onMouseEnter={(e) => {
+            if (!loading) {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 14px 40px rgba(124,58,237,0.45)';
+              e.currentTarget.style.filter = 'brightness(1.06)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 10px 30px rgba(124,58,237,0.35)';
+            e.currentTarget.style.filter = 'brightness(1)';
+          }}
         >
           {loading ? '⚡ …' : '⚡ Shorten'}
         </button>
       </div>
 
       {result && (
-        <div className="demo-card-result">
-          <span className="demo-card-result-link">
+        <div style={{
+          background: 'var(--pillBg)',
+          border: '1px solid var(--pillBorder)',
+          borderRadius: 14,
+          padding: '0.9rem 1rem',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          animation: 'popIn 0.32s ease',
+        }}>
+          <span style={{ fontFamily: 'Geist Mono, ui-monospace, SFMono-Regular, Menlo, monospace', fontWeight: 800, color: 'var(--accent)', fontSize: '1rem', letterSpacing: '0.02em' }}>
             🔗 {result}
           </span>
           <button
             onClick={() => navigator.clipboard.writeText(result)}
-            className="demo-card-copy-btn"
+            style={{
+              background: 'var(--accentGrad)',
+              border: 'none', borderRadius: 10,
+              padding: '0.45rem 0.9rem', color: '#fff', fontSize: '0.8rem',
+              fontWeight: 800, cursor: 'pointer',
+              boxShadow: '0 8px 24px rgba(124,58,237,0.35)',
+              transition: 'transform 140ms, box-shadow 140ms',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 12px 28px rgba(124,58,237,0.5)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(124,58,237,0.35)'; }}
           >
             Copy
           </button>
@@ -207,15 +331,21 @@ function DemoCard({ dark }) {
       )}
 
       {/* Mock analytics preview */}
-      <div className="demo-card-stats">
+      <div style={{ marginTop: '1.2rem', display: 'flex', gap: 10 }}>
         {[
           { label: 'Total Links', val: '2,847' },
           { label: 'Clicks Today', val: '14.2K' },
           { label: 'Uptime', val: '99.9%' },
         ].map((s) => (
-          <div key={s.label} className="demo-card-stat-box">
-            <div className="demo-card-stat-val">{s.val}</div>
-            <div className="demo-card-stat-label">{s.label}</div>
+          <div key={s.label} style={{
+            flex: 1, textAlign: 'center',
+            background: 'var(--statBg)',
+            borderRadius: 12, padding: '0.7rem 0.5rem',
+            border: '1px solid var(--statBorder)',
+            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)',
+          }}>
+            <div style={{ fontWeight: 900, fontSize: '1rem', color: 'var(--accent)' }}>{s.val}</div>
+            <div style={{ fontSize: '0.72rem', color: 'var(--muted)', marginTop: 2 }}>{s.label}</div>
           </div>
         ))}
       </div>
@@ -227,14 +357,12 @@ function DemoCard({ dark }) {
    MAIN LANDING PAGE
 ══════════════════════════════════════════ */
 export default function Landing() {
-  const [dark, setDark] = useState(() => {
-    try { return localStorage.getItem('snip-theme') !== 'light'; } catch { return true; }
-  });
+  const [dark, setDark] = useState(true);
 
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
-    try { localStorage.setItem('snip-theme', dark ? 'dark' : 'light'); } catch {}
-  }, [dark]);
+  const bg = dark ? '#0a0a0f' : '#faf9ff';
+  const text = dark ? '#f6f7fb' : '#0f1222';
+  const muted = dark ? '#a8acb8' : '#5f6580';
+  const accent = '#7c3aed';
 
   const features = [
     { icon: '⚡', title: 'Instant Shortening', desc: 'Generate short links in milliseconds with a 7-character nanoid code that is guaranteed unique.' },
@@ -246,106 +374,303 @@ export default function Landing() {
   ];
 
   return (
-    <div className="landing-wrap">
+    <div style={{
+      '--accent': accent,
+      '--accentSoft': dark ? 'rgba(124,58,237,0.55)' : 'rgba(124,58,237,0.45)',
+      '--accentGrad': 'linear-gradient(135deg, #7c3aed, #a855f7 45%, #22d3ee 120%)',
+      '--focusRing': dark ? 'rgba(124,58,237,0.25)' : 'rgba(124,58,237,0.2)',
+      '--muted': muted,
+      '--mutedStrong': dark ? '#c2c6d6' : '#3c4056',
+      '--heading': dark ? '#f2f4ff' : '#0f1222',
+      '--chipBg': dark ? 'rgba(124,58,237,0.16)' : 'rgba(124,58,237,0.1)',
+      '--pillBg': dark ? 'rgba(124,58,237,0.14)' : 'rgba(124,58,237,0.06)',
+      '--pillBorder': dark ? 'rgba(124,58,237,0.32)' : 'rgba(124,58,237,0.2)',
+      '--inputBg': dark ? 'rgba(10,10,16,0.6)' : '#f4f2ff',
+      '--inputBorder': dark ? 'rgba(168,85,247,0.28)' : 'rgba(124,58,237,0.24)',
+      '--statBg': dark ? 'rgba(255,255,255,0.04)' : '#fbfaff',
+      '--statBorder': dark ? 'rgba(255,255,255,0.06)' : 'rgba(15,18,34,0.06)',
+      background: bg,
+      color: text,
+      fontFamily: "'Geist', 'Sora', 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif",
+      minHeight: '100vh',
+      overflowX: 'hidden',
+      transition: 'background 0.4s, color 0.4s',
+    }}>
+
+      <style>{`
+        @import url('[fonts.googleapis.com](https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Geist:wght@400;600;700;800;900&display=swap)');
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body, #root { height: 100%; }
+
+        /* Subtle noise */
+        body::before {
+          content: '';
+          position: fixed;
+          inset: 0;
+          pointer-events: none;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='[w3.org](http://www.w3.org/2000/svg)' width='140' height='140' viewBox='0 0 140 140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='table' tableValues='0 0 0 0 0 0.03 0.04 0.03 0.05 0.04 0'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.45'/%3E%3C/svg%3E");
+          opacity: ${dark ? '0.08' : '0.06'};
+        }
+
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(28px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes popIn {
+          from { opacity: 0; transform: scale(0.92); }
+          to   { opacity: 1; transform: scale(1); }
+        }
+        @keyframes float {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          33%       { transform: translateY(-12px) rotate(0.6deg); }
+          66%       { transform: translateY(-5px) rotate(-0.6deg); }
+        }
+        @keyframes gradientShift {
+          0%   { background-position: 0% 50%; }
+          50%  { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        @keyframes ticker {
+          0%   { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        @keyframes shine {
+          0% { transform: translateX(-120%); }
+          55% { transform: translateX(120%); }
+          100% { transform: translateX(120%); }
+        }
+        .ticker-inner { animation: ticker 22s linear infinite; }
+
+        .btn-primary {
+          background: var(--accentGrad);
+          background-size: 200% 200%;
+          animation: gradientShift 5s ease infinite;
+          border: none;
+          border-radius: 16px;
+          padding: 0.95rem 2.1rem;
+          color: #fff;
+          font-weight: 900;
+          font-size: 1rem;
+          cursor: pointer;
+          transition: transform 160ms, box-shadow 160ms, filter 160ms;
+          font-family: inherit;
+          text-decoration: none;
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          box-shadow: 0 14px 40px rgba(124,58,237,0.42);
+        }
+        .btn-primary:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 18px 54px rgba(124,58,237,0.52);
+          filter: brightness(1.06);
+        }
+        .btn-ghost {
+          background: transparent;
+          border: 1.6px solid ${dark ? 'rgba(168,85,247,0.4)' : 'rgba(124,58,237,0.28)'};
+          border-radius: 16px;
+          padding: 0.95rem 2rem;
+          color: ${dark ? '#eaeaf6' : '#2a2c3e'};
+          font-weight: 800;
+          font-size: 1rem;
+          cursor: pointer;
+          transition: all 160ms;
+          font-family: inherit;
+          text-decoration: none;
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+        }
+        .btn-ghost:hover {
+          background: ${dark ? 'rgba(168,85,247,0.12)' : 'rgba(124,58,237,0.08)'};
+          border-color: var(--accent);
+          color: var(--accent);
+        }
+        .nav-link {
+          color: ${muted};
+          text-decoration: none;
+          font-size: 0.95rem;
+          font-weight: 600;
+          transition: color 160ms, transform 160ms;
+          letter-spacing: 0.01em;
+        }
+        .nav-link:hover { color: ${text}; transform: translateY(-1px); }
+      `}</style>
 
       {/* ── NAVBAR ── */}
-      <nav className="landing-nav">
-        <div className="landing-nav-container">
-          <div className="landing-nav-brand">
-            <div className="landing-nav-logo-icon">⚡</div>
-            <span className="landing-nav-logo-text">
-              snip<span>.ly</span>
+      <nav style={{
+        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
+        background: dark ? 'rgba(5,6,12,0.72)' : 'rgba(255,255,255,0.7)',
+        backdropFilter: 'blur(20px) saturate(140%)',
+        borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)'}`,
+        transition: 'background 0.4s',
+      }}>
+        <div style={{ maxWidth: 1220, margin: '0 auto', padding: '0 1.5rem', height: 70, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{
+              width: 36, height: 36, borderRadius: 12,
+              background: 'linear-gradient(135deg, #7c3aed, #a855f7 70%, #06b6d4)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 16,
+              boxShadow: '0 0 30px rgba(124,58,237,0.4), inset 0 1px 0 rgba(255,255,255,0.4)',
+            }}>⚡</div>
+            <span style={{ fontWeight: 900, fontSize: '1.15rem', letterSpacing: '-0.02em' }}>
+              snip<span style={{ color: 'var(--accent)' }}>.ly</span>
             </span>
           </div>
 
-          <div className="landing-nav-links">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
             <a href="#features" className="nav-link">Features</a>
             <a href="#stats" className="nav-link">Stats</a>
             <a href="#how" className="nav-link">How it works</a>
           </div>
 
-          <div className="landing-nav-actions">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             {/* Dark/light toggle */}
             <button
               onClick={() => setDark(!dark)}
-              className="theme-toggle-btn"
+              style={{
+                background: dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
+                border: '1px solid rgba(124,58,237,0.25)', borderRadius: 12, width: 42, height: 42,
+                cursor: 'pointer', fontSize: 18, transition: 'all 160ms',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                boxShadow: dark ? 'inset 0 1px 0 rgba(255,255,255,0.08)' : 'inset 0 1px 0 rgba(255,255,255,0.8)',
+              }}
               title="Toggle theme"
+              onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-1px)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; }}
             >
               {dark ? '☀️' : '🌙'}
             </button>
-            <Link to="/login" className="btn btn-ghost" style={{ padding: '0.65rem 1.2rem', fontSize: '0.9rem' }}>
+            <Link to="/login" className="btn-ghost" style={{ padding: '0.65rem 1.2rem', fontSize: '0.9rem' }}>
               Sign in
             </Link>
-            <Link to="/register" className="btn btn-primary" style={{ padding: '0.65rem 1.2rem', fontSize: '0.9rem' }}>
+            <Link to="/register" className="btn-primary" style={{ padding: '0.65rem 1.2rem', fontSize: '0.9rem' }}>
               Get started →
             </Link>
           </div>
         </div>
       </nav>
 
+      {/* Background gradient grid + particles */}
+      <div style={{
+        position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none',
+        background: dark
+          ? 'radial-gradient(1200px 600px at 20% 10%, rgba(124,58,237,0.18) 0%, rgba(124,58,237,0.0) 60%), radial-gradient(1000px 500px at 85% 80%, rgba(6,182,212,0.14) 0%, rgba(6,182,212,0.0) 60%)'
+          : 'radial-gradient(1200px 600px at 20% 10%, rgba(124,58,237,0.18) 0%, rgba(124,58,237,0.0) 60%), radial-gradient(1000px 500px at 85% 80%, rgba(79,70,229,0.14) 0%, rgba(79,70,229,0.0) 60%)',
+        maskImage: 'radial-gradient(ellipse at center, black 60%, transparent 100%)'
+      }} />
+      <ParticleField dark={dark} />
+
       {/* ── HERO ── */}
-      <section className="landing-hero-section">
-        {/* Background gradient grid + particles */}
-        <div className="landing-bg-overlay" />
-        <ParticleField dark={dark} />
-
+      <section style={{ position: 'relative', minHeight: '100vh', display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
         {/* Glow orbs refined */}
-        <div className="landing-glow-orb-1" />
-        <div className="landing-glow-orb-2" />
+        <div style={{
+          position: 'absolute', top: '12%', left: '8%',
+          width: 520, height: 520, borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(124,58,237,0.14) 0%, transparent 70%)',
+          filter: 'blur(2px)',
+          pointerEvents: 'none',
+        }} />
+        <div style={{
+          position: 'absolute', bottom: '8%', right: '8%',
+          width: 420, height: 420, borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(6,182,212,0.12) 0%, transparent 70%)',
+          pointerEvents: 'none',
+        }} />
 
-        <div className="landing-hero-container">
+        <div style={{ maxWidth: 1220, margin: '0 auto', padding: '7rem 1.5rem 4rem', display: 'flex', alignItems: 'center', gap: '4rem', position: 'relative', zIndex: 1, flexWrap: 'wrap' }}>
           {/* Left: headline */}
-          <div className="landing-hero-left">
-            <div className="landing-hero-badge">
-              <span className="landing-hero-badge-dot" />
+          <div style={{ flex: 1, minWidth: 320 }}>
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: 10,
+              background: dark ? 'rgba(124,58,237,0.18)' : 'rgba(124,58,237,0.1)',
+              border: '1px solid rgba(124,58,237,0.35)',
+              borderRadius: 999, padding: '0.45rem 1rem',
+              fontSize: '0.8rem', fontWeight: 800, color: 'var(--accent)',
+              marginBottom: '1.5rem', animation: 'fadeUp 0.5s ease both',
+              letterSpacing: '0.08em',
+              boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.1)',
+            }}>
+              <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#22c55e', display: 'inline-block', boxShadow: '0 0 10px #22c55e' }} />
               Free · Open Source · Production Ready
             </div>
 
-            <h1 className="landing-hero-title">
+            <h1 style={{
+              fontSize: 'clamp(2.8rem, 6.2vw, 4.6rem)',
+              fontWeight: 900,
+              lineHeight: 1.05,
+              letterSpacing: '-0.04em',
+              marginBottom: '1.2rem',
+              animation: 'fadeUp 0.6s 0.1s ease both',
+              fontFamily: "'Sora', 'Geist', sans-serif",
+              background: 'linear-gradient(180deg, #ffffff, #c7c9ff)',
+              WebkitBackgroundClip: 'text',
+              color: dark ? 'transparent' : '#0f1222',
+              textShadow: dark ? '0 0 30px rgba(124,58,237,0.18)' : 'none',
+            }}>
               Shorten links.<br />
               Track <Typewriter words={['every click.', 'all visits.', 'real analytics.', 'your growth.']} />
             </h1>
 
-            <p className="landing-hero-desc">
+            <p style={{
+              fontSize: 'clamp(1rem, 2vw, 1.18rem)',
+              color: 'var(--mutedStrong)',
+              lineHeight: 1.8,
+              maxWidth: 540,
+              marginBottom: '2rem',
+              animation: 'fadeUp 0.6s 0.2s ease both',
+            }}>
               A blazing-fast URL shortener with real-time analytics, custom dashboards,
               and JWT-secured accounts. Built for developers and creators.
             </p>
 
-            <div className="landing-hero-actions">
-              <Link to="/register" className="btn btn-primary">
+            <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', animation: 'fadeUp 0.6s 0.3s ease both' }}>
+              <Link to="/register" className="btn-primary">
                 🚀 Start for free
               </Link>
-              <Link to="/login" className="btn btn-ghost">
+              <Link to="/login" className="btn-ghost">
                 Sign in
               </Link>
             </div>
 
-            <div className="landing-hero-stats">
+            <div style={{ marginTop: '2.4rem', display: 'flex', alignItems: 'center', gap: '1.8rem', animation: 'fadeUp 0.6s 0.4s ease both' }}>
               {[
                 { n: '50K+', l: 'Links created' },
                 { n: '2M+', l: 'Clicks tracked' },
                 { n: '99.9%', l: 'Uptime' },
               ].map((s) => (
                 <div key={s.l}>
-                  <div className="landing-hero-stat-num">{s.n}</div>
-                  <div className="landing-hero-stat-label">{s.l}</div>
+                  <div style={{
+                    fontWeight: 900, fontSize: '1.22rem',
+                    background: 'var(--accentGrad)',
+                    WebkitBackgroundClip: 'text',
+                    color: 'transparent'
+                  }}>{s.n}</div>
+                  <div style={{ fontSize: '0.8rem', color: muted }}>{s.l}</div>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Right: interactive demo card */}
-          <div className="landing-hero-right">
+          <div style={{ flex: '0 0 auto', minWidth: 360 }}>
             <DemoCard dark={dark} />
           </div>
         </div>
       </section>
 
       {/* ── TICKER STRIP ── */}
-      <div className="ticker-strip">
-        <div className="ticker-inner">
+      <div style={{
+        overflow: 'hidden',
+        background: 'var(--accentGrad)',
+        padding: '0.9rem 0',
+        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.18)',
+      }}>
+        <div className="ticker-inner" style={{ display: 'flex', gap: '3rem', whiteSpace: 'nowrap' }}>
           {Array(2).fill(['⚡ Instant short links', '📊 Click analytics', '🔐 Secure accounts', '🔁 Smart redirects', '📱 Mobile friendly', '🌐 Works everywhere', '🗂️ Dashboard view', '💾 Visit history']).flat().map((t, i) => (
-            <span key={i} className="ticker-item">
+            <span key={i} style={{ fontSize: '0.88rem', fontWeight: 800, color: 'rgba(255,255,255,0.92)', letterSpacing: '0.06em' }}>
               {t}
             </span>
           ))}
@@ -353,49 +678,67 @@ export default function Landing() {
       </div>
 
       {/* ── FEATURES ── */}
-      <section id="features" className="features-section">
-        <div className="features-header">
-          <div className="features-badge">
+      <section id="features" style={{ maxWidth: 1220, margin: '0 auto', padding: '6rem 1.5rem' }}>
+        <div style={{ textAlign: 'center', marginBottom: '3.3rem' }}>
+          <div style={{
+            display: 'inline-block',
+            background: dark ? 'rgba(124,58,237,0.18)' : 'rgba(124,58,237,0.1)',
+            border: '1px solid rgba(124,58,237,0.35)',
+            borderRadius: 999, padding: '0.38rem 1.05rem',
+            fontSize: '0.8rem', fontWeight: 800, color: 'var(--accent)',
+            marginBottom: '1rem', letterSpacing: '0.08em',
+          }}>
             Everything you need
           </div>
-          <h2 className="features-title">
+          <h2 style={{ fontSize: 'clamp(1.9rem, 4.2vw, 3rem)', fontWeight: 900, letterSpacing: '-0.03em', marginBottom: '0.8rem', fontFamily: "'Sora', sans-serif" }}>
             Packed with powerful features
           </h2>
-          <p className="features-desc">
+          <p style={{ color: muted, fontSize: '1.05rem', maxWidth: 560, margin: '0 auto' }}>
             From instant link creation to deep analytics — everything you need to manage and track your URLs.
           </p>
         </div>
-        <div className="features-grid">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
           {features.map((f, i) => (
-            <FeatureCard key={f.title} {...f} delay={`${i * 0.08}s`} />
+            <FeatureCard key={f.title} {...f} delay={`${i * 0.08}s`} dark={dark} />
           ))}
         </div>
       </section>
 
       {/* ── HOW IT WORKS ── */}
-      <section id="how" className="how-section">
-        <div className="how-container">
-          <div className="how-header">
-            <h2 className="how-title">
+      <section id="how" style={{
+        background: dark ? 'linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.04))' : 'linear-gradient(180deg, rgba(124,58,237,0.04), rgba(124,58,237,0.06))',
+        borderTop: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'}`,
+        borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'}`,
+        padding: '6rem 1.5rem',
+      }}>
+        <div style={{ maxWidth: 1220, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: '3.3rem' }}>
+            <h2 style={{ fontSize: 'clamp(1.9rem, 4.2vw, 3rem)', fontWeight: 900, letterSpacing: '-0.03em', marginBottom: '0.6rem', fontFamily: "'Sora', sans-serif" }}>
               How it works
             </h2>
-            <p className="how-desc">Three steps, zero friction.</p>
+            <p style={{ color: muted, fontSize: '1.05rem' }}>Three steps, zero friction.</p>
           </div>
-          <div className="how-grid">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '2rem', position: 'relative' }}>
             {[
               { num: '01', icon: '🔑', title: 'Create account', desc: 'Sign up in seconds. Your links and analytics are private and tied to your account.' },
               { num: '02', icon: '🔗', title: 'Paste your URL', desc: 'Drop any long link into the shortener. We generate a compact 7-char code instantly.' },
               { num: '03', icon: '📊', title: 'Share & track', desc: 'Share your short URL. Watch clicks roll in with real-time analytics on your dashboard.' },
             ].map((step) => (
-              <div key={step.num} className="how-step">
-                <div className="how-step-icon">
+              <div key={step.num} style={{ textAlign: 'center', position: 'relative' }}>
+                <div style={{
+                  width: 80, height: 80, borderRadius: '50%',
+                  background: 'var(--accentGrad)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 30, margin: '0 auto 1.2rem',
+                  boxShadow: '0 0 40px rgba(124,58,237,0.45)',
+                }}>
                   {step.icon}
                 </div>
-                <div className="how-step-tag">
+                <div style={{ fontSize: '0.75rem', fontWeight: 900, color: 'var(--accent)', letterSpacing: '0.12em', marginBottom: '0.5rem' }}>
                   STEP {step.num}
                 </div>
-                <h3 className="how-step-title">{step.title}</h3>
-                <p className="how-step-desc">{step.desc}</p>
+                <h3 style={{ fontSize: '1.18rem', fontWeight: 800, marginBottom: '0.6rem', color: 'var(--heading)' }}>{step.title}</h3>
+                <p style={{ color: muted, fontSize: '0.92rem', lineHeight: 1.8, maxWidth: 260, margin: '0 auto' }}>{step.desc}</p>
               </div>
             ))}
           </div>
@@ -403,44 +746,89 @@ export default function Landing() {
       </section>
 
       {/* ── STATS STRIP ── */}
-      <section id="stats" className="stats-section">
-        <div className="stats-header">
-          <h2 className="stats-title">
+      <section id="stats" style={{ maxWidth: 1220, margin: '0 auto', padding: '6rem 1.5rem' }}>
+        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+          <h2 style={{ fontSize: 'clamp(1.9rem, 4.2vw, 3rem)', fontWeight: 900, letterSpacing: '-0.03em', fontFamily: "'Sora', sans-serif" }}>
             Trusted by makers worldwide
           </h2>
         </div>
-        <div className="stats-grid">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
           {[
             { label: 'Links Shortened', target: 50284, suffix: '+' },
             { label: 'Clicks Tracked', target: 2100000, suffix: '+' },
             { label: 'Active Users', target: 3200, suffix: '+' },
             { label: 'Uptime %', target: 99, suffix: '.9%' },
           ].map((s) => (
-            <div key={s.label} className="stats-card">
-              <div className="stats-card-val">
+            <div key={s.label} style={{
+              textAlign: 'center',
+              background: dark ? 'rgba(124,58,237,0.08)' : 'rgba(124,58,237,0.06)',
+              border: `1px solid ${dark ? 'rgba(124,58,237,0.22)' : 'rgba(124,58,237,0.16)'}`,
+              borderRadius: 22, padding: '2.1rem 1rem',
+              boxShadow: dark ? '0 14px 40px rgba(0,0,0,0.35)' : '0 14px 40px rgba(124,58,237,0.12)',
+              backdropFilter: 'blur(6px)',
+            }}>
+              <div style={{ fontSize: 'clamp(2.1rem, 4.4vw, 3rem)', fontWeight: 900, letterSpacing: '-0.03em',
+                background: 'var(--accentGrad)', WebkitBackgroundClip: 'text', color: 'transparent'
+              }}>
                 <Counter target={s.target} suffix={s.suffix} />
               </div>
-              <div className="stats-card-label">{s.label}</div>
+              <div style={{ color: muted, fontSize: '0.9rem', marginTop: '0.5rem', fontWeight: 700 }}>{s.label}</div>
             </div>
           ))}
         </div>
       </section>
 
       {/* ── CTA ── */}
-      <section className="cta-section">
-        <div className="cta-overlay" />
-        <div className="cta-container">
-          <h2 className="cta-title">
+      <section style={{
+        background: 'linear-gradient(135deg, #5b21b6 0%, #7c3aed 40%, #06b6d4 100%)',
+        padding: '6rem 1.5rem',
+        textAlign: 'center',
+        position: 'relative',
+        overflow: 'hidden',
+        borderTop: '1px solid rgba(255,255,255,0.12)',
+      }}>
+        <div style={{
+          position: 'absolute', top: '-50%', left: '30%',
+          width: 640, height: 640, borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(255,255,255,0.10) 0%, transparent 60%)',
+          pointerEvents: 'none',
+          filter: 'blur(2px)'
+        }} />
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <h2 style={{ fontSize: 'clamp(2.1rem, 5vw, 3.6rem)', fontWeight: 900, color: '#fff', letterSpacing: '-0.035em', marginBottom: '1rem', fontFamily: "'Sora', sans-serif" }}>
             Ready to shorten smarter?
           </h2>
-          <p className="cta-desc">
+          <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '1.12rem', marginBottom: '2rem', maxWidth: 520, margin: '0 auto 2rem' }}>
             Join thousands of creators and developers who trust snip.ly for their links.
           </p>
-          <div className="cta-actions">
-            <Link to="/register" className="cta-btn-primary">
+          <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <Link to="/register" style={{
+              background: '#fff', color: '#5b21b6',
+              border: 'none', borderRadius: 16,
+              padding: '1rem 2.3rem',
+              fontWeight: 900, fontSize: '1rem',
+              cursor: 'pointer', textDecoration: 'none',
+              display: 'inline-flex', alignItems: 'center', gap: 10,
+              transition: 'transform 160ms, box-shadow 160ms, filter 160ms',
+              boxShadow: '0 14px 40px rgba(0,0,0,0.2)',
+            }}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 18px 54px rgba(0,0,0,0.3)'; e.currentTarget.style.filter = 'brightness(1.02)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 14px 40px rgba(0,0,0,0.2)'; e.currentTarget.style.filter = 'brightness(1)'; }}
+            >
               🚀 Create free account
             </Link>
-            <Link to="/login" className="cta-btn-secondary">
+            <Link to="/login" style={{
+              background: 'rgba(255,255,255,0.14)',
+              border: '1.6px solid rgba(255,255,255,0.4)',
+              borderRadius: 16, padding: '1rem 2.3rem',
+              color: '#fff', fontWeight: 800, fontSize: '1rem',
+              cursor: 'pointer', textDecoration: 'none',
+              display: 'inline-flex', alignItems: 'center', gap: 10,
+              transition: 'background 160ms, transform 160ms',
+            }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.22)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.14)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+            >
               Sign in instead
             </Link>
           </div>
@@ -448,11 +836,17 @@ export default function Landing() {
       </section>
 
       {/* ── FOOTER ── */}
-      <footer className="landing-footer">
-        <div className="landing-footer-logo">
-          ⚡ snip<span>.ly</span>
+      <footer style={{
+        borderTop: `1px solid ${dark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)'}`,
+        padding: '2.5rem 1.5rem',
+        textAlign: 'center',
+        background: dark ? 'rgba(10,10,16,0.4)' : 'linear-gradient(0deg, #ffffff, #faf9ff)',
+        backdropFilter: 'blur(6px)',
+      }}>
+        <div style={{ fontSize: '1rem', fontWeight: 900, marginBottom: '0.4rem' }}>
+          ⚡ snip<span style={{ color: 'var(--accent)' }}>.ly</span>
         </div>
-        <p className="landing-footer-copy">
+        <p style={{ color: muted, fontSize: '0.82rem' }}>
           Built with React, Node.js, MongoDB &amp; ❤️ — {new Date().getFullYear()}
         </p>
       </footer>
