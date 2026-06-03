@@ -327,24 +327,22 @@ function DemoCard({ dark }) {
       )}
 
       {/* Mock analytics preview */}
-      <div style={{ marginTop: '1.2rem', display: 'flex', gap: 10 }}>
-        {[
-          { label: 'Total Links', val: '2,847' },
-          { label: 'Clicks Today', val: '14.2K' },
-          { label: 'Uptime', val: '99.9%' },
-        ].map((s) => (
-          <div key={s.label} style={{
-            flex: 1, textAlign: 'center',
-            background: 'var(--statBg)',
-            borderRadius: 12, padding: '0.7rem 0.5rem',
-            border: '1px solid var(--statBorder)',
-            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)',
-          }}>
-            <div style={{ fontWeight: 900, fontSize: '1rem', color: 'var(--accent)' }}>{s.val}</div>
-            <div style={{ fontSize: '0.72rem', color: 'var(--muted)', marginTop: 2 }}>{s.label}</div>
-          </div>
-        ))}
-      </div>
+           {result && (
+        <div
+          style={{
+            background: 'var(--pillBg)',
+            border: '1px solid var(--pillBorder)',
+            borderRadius: 14,
+            padding: '0.9rem 1rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            animation: 'popIn 0.32s ease',
+          }}
+        >
+          ...
+        </div>
+      )}
     </div>
   );
 }
@@ -531,7 +529,7 @@ export default function Landing() {
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
             <a href="#features" className="nav-link">Features</a>
-            <a href="#stats" className="nav-link">Stats</a>
+            
             <a href="#how" className="nav-link">How it works</a>
           </div>
 
@@ -764,38 +762,7 @@ export default function Landing() {
       </section>
 
       {/* ── STATS STRIP ── */}
-      <section id="stats" style={{ maxWidth: 1220, margin: '0 auto', padding: '6rem 1.5rem' }}>
-        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-          <h2 style={{ fontSize: 'clamp(1.9rem, 4.2vw, 3rem)', fontWeight: 900, letterSpacing: '-0.03em', fontFamily: fontD }}>
-            Trusted by makers worldwide
-          </h2>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
-          {[
-            { label: 'Links Shortened', target: 50284, suffix: '+' },
-            { label: 'Clicks Tracked', target: 2100000, suffix: '+' },
-            { label: 'Active Users', target: 3200, suffix: '+' },
-            { label: 'Uptime %', target: 99, suffix: '.9%' },
-          ].map((s) => (
-            <div key={s.label} style={{
-              textAlign: 'center',
-              background: dark ? 'rgba(201,105,122,0.08)' : 'rgba(139,123,200,0.06)',
-              border: `1px solid ${dark ? 'rgba(201,105,122,0.22)' : 'rgba(139,123,200,0.16)'}`,
-              borderRadius: 22, padding: '2.1rem 1rem',
-              boxShadow: dark ? '0 14px 40px rgba(0,0,0,0.35)' : '0 14px 40px rgba(139,123,200,0.12)',
-              backdropFilter: 'blur(6px)',
-            }}>
-              <div style={{ fontSize: 'clamp(2.1rem, 4.4vw, 3rem)', fontWeight: 900, letterSpacing: '-0.03em',
-                background: 'var(--accentGrad)', WebkitBackgroundClip: 'text', color: 'transparent',
-                fontFamily: fontD
-              }}>
-                <Counter target={s.target} suffix={s.suffix} />
-              </div>
-              <div style={{ color: muted, fontSize: '0.9rem', marginTop: '0.5rem', fontWeight: 700 }}>{s.label}</div>
-            </div>
-          ))}
-        </div>
-      </section>
+      
 
       {/* ── CTA ── */}
       <section style={{
