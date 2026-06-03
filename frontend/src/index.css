@@ -58,6 +58,8 @@
   --p4: #e8cc9d;
   --p5: rgba(247,244,240,0.6);
 
+  --noise-opacity: 0.08;
+
   --font-d: 'Cormorant Garamond', serif;
   --font-g: 'Montserrat', sans-serif;
   --font-m: 'Space Mono', monospace;
@@ -127,6 +129,7 @@
   --font-g: 'DM Sans', sans-serif;
   --font-m: 'Space Mono', monospace;
   --font-b: 'DM Sans', sans-serif;
+  --noise-opacity: 0.06;
   color-scheme: light;
 }
 
@@ -171,7 +174,7 @@ body::before {
   pointer-events: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='table' tableValues='0 0 0 0 0 0.03 0.04 0.03 0.05 0.04 0'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.45'/%3E%3C/svg%3E");
   z-index: 100;
-  opacity: 0.08;
+  opacity: var(--noise-opacity, 0.08);
 }
 
 /* Animations */

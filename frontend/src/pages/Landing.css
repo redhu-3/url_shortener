@@ -839,3 +839,82 @@
   animation: softRotate 16s linear infinite;
   filter: blur(10px);
 }
+
+/* Landing Specific Button and Link Overrides */
+.landing-wrap {
+  --landing-btn-shadow: 0 14px 40px rgba(201, 105, 122, 0.35);
+  --landing-btn-shadow-hover: 0 18px 54px rgba(201, 105, 122, 0.45);
+  --landing-btn-ghost-border: rgba(232, 160, 173, 0.4);
+  --landing-btn-ghost-color: #eaeaf6;
+  --landing-btn-ghost-hover-bg: rgba(232, 160, 173, 0.12);
+}
+
+[data-theme="light"] .landing-wrap {
+  --landing-btn-shadow: 0 14px 40px rgba(139, 123, 200, 0.30);
+  --landing-btn-shadow-hover: 0 18px 54px rgba(139, 123, 200, 0.42);
+  --landing-btn-ghost-border: rgba(139, 123, 200, 0.28);
+  --landing-btn-ghost-color: #2a2c3e;
+  --landing-btn-ghost-hover-bg: rgba(139, 123, 200, 0.08);
+}
+
+.landing-wrap .btn-primary {
+  background: var(--accent-grad);
+  background-size: 200% 200%;
+  animation: gradientShift 5s ease infinite;
+  border: none;
+  border-radius: 16px;
+  padding: 0.95rem 2.1rem;
+  color: #fff;
+  font-weight: 900;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 160ms, box-shadow 160ms, filter 160ms;
+  font-family: inherit;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: var(--landing-btn-shadow);
+}
+
+.landing-wrap .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--landing-btn-shadow-hover);
+  filter: brightness(1.06);
+}
+
+.landing-wrap .btn-ghost {
+  background: transparent;
+  border: 1.6px solid var(--landing-btn-ghost-border);
+  border-radius: 16px;
+  padding: 0.95rem 2rem;
+  color: var(--landing-btn-ghost-color);
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 160ms;
+  font-family: inherit;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.landing-wrap .btn-ghost:hover {
+  background: var(--landing-btn-ghost-hover-bg);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.landing-wrap .nav-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  transition: color 160ms;
+}
+
+.landing-wrap .nav-link:hover {
+  color: var(--accent);
+}

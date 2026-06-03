@@ -379,7 +379,7 @@ export default function Landing() {
   const fontB = 'var(--font-b)';
 
   return (
-    <div style={{
+    <div className="landing-wrap" style={{
       '--accent': 'var(--accent)',
       '--accentSoft': 'var(--accent-soft)',
       '--accentGrad': 'var(--accent-grad)',
@@ -403,108 +403,6 @@ export default function Landing() {
     }}>
       <div className="landing-extra-bg" />
 
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;700&display=swap');
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        html, body, #root { height: 100%; }
-
-        /* Subtle noise */
-        body::before {
-          content: '';
-          position: fixed;
-          inset: 0;
-          pointer-events: none;
-          background-image: url("data:image/svg+xml,%3Csvg xmlns='[w3.org](http://www.w3.org/2000/svg)' width='140' height='140' viewBox='0 0 140 140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='table' tableValues='0 0 0 0 0 0.03 0.04 0.03 0.05 0.04 0'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.45'/%3E%3C/svg%3E");
-          opacity: ${dark ? '0.08' : '0.06'};
-        }
-
-        @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(28px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes popIn {
-          from { opacity: 0; transform: scale(0.92); }
-          to   { opacity: 1; transform: scale(1); }
-        }
-        @keyframes float {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          33%       { transform: translateY(-12px) rotate(0.6deg); }
-          66%       { transform: translateY(-5px) rotate(-0.6deg); }
-        }
-        @keyframes gradientShift {
-          0%   { background-position: 0% 50%; }
-          50%  { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-        @keyframes ticker {
-          0%   { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-        @keyframes shine {
-          0% { transform: translateX(-120%); }
-          55% { transform: translateX(120%); }
-          100% { transform: translateX(120%); }
-        }
-        .ticker-inner { animation: ticker 22s linear infinite; }
-
-        .btn-primary {
-          background: var(--accentGrad);
-          background-size: 200% 200%;
-          animation: gradientShift 5s ease infinite;
-          border: none;
-          border-radius: 16px;
-          padding: 0.95rem 2.1rem;
-          color: #fff;
-          font-weight: 900;
-          font-size: 1rem;
-          cursor: pointer;
-          transition: transform 160ms, box-shadow 160ms, filter 160ms;
-          font-family: inherit;
-          text-decoration: none;
-          display: inline-flex;
-          align-items: center;
-          gap: 10px;
-          box-shadow: 0 14px 40px ${dark ? 'rgba(201, 105, 122, 0.35)' : 'rgba(139, 123, 200, 0.3)'};
-        }
-        .btn-primary:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 18px 54px ${dark ? 'rgba(201, 105, 122, 0.45)' : 'rgba(139, 123, 200, 0.42)'};
-          filter: brightness(1.06);
-        }
-        .btn-ghost {
-          background: transparent;
-          border: 1.6px solid ${dark ? 'rgba(232, 160, 173, 0.4)' : 'rgba(139, 123, 200, 0.28)'};
-          border-radius: 16px;
-          padding: 0.95rem 2rem;
-          color: ${dark ? '#eaeaf6' : '#2a2c3e'};
-          font-weight: 800;
-          font-size: 1rem;
-          cursor: pointer;
-          transition: all 160ms;
-          font-family: inherit;
-          text-decoration: none;
-          display: inline-flex;
-          align-items: center;
-          gap: 10px;
-        }
-        .btn-ghost:hover {
-          background: ${dark ? 'rgba(232, 160, 173, 0.12)' : 'rgba(139, 123, 200, 0.08)'};
-          border-color: var(--accent);
-          color: var(--accent);
-        }
-        .nav-link {
-          color: ${muted};
-          text-decoration: none;
-          font-family: inherit;
-          font-size: 0.9rem;
-          font-weight: 700;
-          transition: color 160ms;
-        }
-        .nav-link:hover {
-          color: var(--accent);
-        }
-      `}</style>
       {/* ── NAVBAR ── */}
       <nav style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
@@ -647,23 +545,8 @@ export default function Landing() {
               </Link>
             </div>
 
-            <div style={{ marginTop: '2.4rem', display: 'flex', alignItems: 'center', gap: '1.8rem', animation: 'fadeUp 0.6s 0.4s ease both' }}>
-              {[
-                { n: '50K+', l: 'Links created' },
-                { n: '2M+', l: 'Clicks tracked' },
-                { n: '99.9%', l: 'Uptime' },
-              ].map((s) => (
-                <div key={s.l}>
-                  <div style={{
-                    fontWeight: 900, fontSize: '1.22rem',
-                    background: 'var(--accentGrad)',
-                    WebkitBackgroundClip: 'text',
-                    color: 'transparent'
-                  }}>{s.n}</div>
-                  <div style={{ fontSize: '0.8rem', color: muted }}>{s.l}</div>
-                </div>
-              ))}
-            </div>
+         
+         
           </div>
 
           {/* Right: interactive demo card */}
@@ -833,7 +716,7 @@ export default function Landing() {
           ⚡ snip<span style={{ color: 'var(--accent)' }}>.ly</span>
         </div>
         <p style={{ color: muted, fontSize: '0.82rem' }}>
-          Built with React, Node.js, MongoDB &amp; ❤️ — {new Date().getFullYear()}
+            {new Date().getFullYear()}
         </p>
       </footer>
     </div>
