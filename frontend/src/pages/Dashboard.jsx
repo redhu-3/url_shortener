@@ -7,8 +7,7 @@ import {
   RiEditLine, RiCloseLine, RiUploadCloud2Line, RiExternalLinkLine,
   RiTimeLine, RiGlobalLine, RiShieldLine,
   RiFlashlightLine, RiArrowRightLine, RiMenuLine,
-  RiStarFill, RiStarLine, RiPulseLine, RiLockPasswordLine, RiEyeLine, RiEyeOffLine,
-  RiSearchLine
+  RiStarFill, RiStarLine, RiPulseLine, RiLockPasswordLine, RiEyeLine, RiEyeOffLine
 } from 'react-icons/ri';
 import { QRCodeSVG } from 'qrcode.react';
 import Papa from 'papaparse';
@@ -682,187 +681,6 @@ function CreateForm({ onCreated, showToast }) {
 }
 
 /* ─────────────────────────────────────────
-   FUTURISTIC METRICS PANEL
-───────────────────────────────────────── */
-function FuturisticMetricsPanel({ totalClicks, urlsCount, activeLinks, publicLinks, isPingingAll, handlePingAll, pingProgress }) {
-  const activePercent = urlsCount > 0 ? (activeLinks / urlsCount) * 100 : 0;
-  const publicPercent = urlsCount > 0 ? (publicLinks / urlsCount) * 100 : 0;
-  const privateLinks = urlsCount - publicLinks;
-
-  return (
-    <div className="metrics-panel-container">
-      {/* Click Engagement Wheel */}
-      <motion.div
-        className="metric-card"
-        whileHover={{ y: -5, scale: 1.01 }}
-        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-      >
-        <div className="metric-header">
-          <span className="metric-label">Engagement Wheel</span>
-          <RiBarChartLine className="metric-icon" style={{ color: 'var(--cyan)' }} />
-        </div>
-        <div className="metric-body-circle">
-          <div className="svg-circle-wrap">
-            <svg viewBox="0 0 100 100">
-              <circle cx="50" cy="50" r="40" className="circle-bg" />
-              <motion.circle
-                cx="50"
-                cy="50"
-                r="40"
-                className="circle-progress click-ring"
-                initial={{ strokeDasharray: '251.2', strokeDashoffset: '251.2' }}
-                animate={{ strokeDashoffset: 251.2 - (251.2 * Math.min(totalClicks, 10000)) / 10000 }}
-                transition={{ duration: 1.5, ease: 'easeOut' }}
-              />
-            </svg>
-            <div className="circle-inner-val">
-              <span className="circle-num">{totalClicks.toLocaleString()}</span>
-              <span className="circle-lbl">CLICKS</span>
-            </div>
-          </div>
-        </div>
-        <div className="metric-footer">
-          <span>Target: 10K clicks</span>
-        </div>
-      </motion.div>
-
-      {/* Link Health Ring */}
-      <motion.div
-        className="metric-card"
-        whileHover={{ y: -5, scale: 1.01 }}
-        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-      >
-        <div className="metric-header">
-          <span className="metric-label">Link Health</span>
-          <RiShieldLine className="metric-icon" style={{ color: 'var(--emerald)' }} />
-        </div>
-        <div className="metric-body-circle">
-          <div className="svg-circle-wrap">
-            <svg viewBox="0 0 100 100">
-              <circle cx="50" cy="50" r="40" className="circle-bg" />
-              <motion.circle
-                cx="50"
-                cy="50"
-                r="40"
-                className="circle-progress health-ring"
-                initial={{ strokeDasharray: '251.2', strokeDashoffset: '251.2' }}
-                animate={{ strokeDashoffset: 251.2 - (251.2 * activePercent) / 100 }}
-                transition={{ duration: 1.5, ease: 'easeOut' }}
-              />
-            </svg>
-            <div className="circle-inner-val">
-              <span className="circle-num">{activeLinks}<span className="circle-slash">/</span>{urlsCount}</span>
-              <span className="circle-lbl">ACTIVE</span>
-            </div>
-          </div>
-        </div>
-        <div className="metric-footer">
-          <span>{activePercent.toFixed(0)}% live links</span>
-        </div>
-      </motion.div>
-
-      {/* Visibility Split Gauge */}
-      <motion.div
-        className="metric-card"
-        whileHover={{ y: -5, scale: 1.01 }}
-        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-      >
-        <div className="metric-header">
-          <span className="metric-label">Accessibility</span>
-          <RiGlobalLine className="metric-icon" style={{ color: 'var(--amber)' }} />
-        </div>
-        <div className="metric-body-slider">
-          <div className="slider-stats">
-            <div className="slider-stat-col">
-              <span className="slider-val">{privateLinks}</span>
-              <span className="slider-lbl">Private</span>
-            </div>
-            <div className="slider-stat-col text-right">
-              <span className="slider-val">{publicLinks}</span>
-              <span className="slider-lbl">Public</span>
-            </div>
-          </div>
-          <div className="slider-track-wrap">
-            <div className="slider-track-bg" />
-            <motion.div
-              className="slider-track-fill"
-              initial={{ width: 0 }}
-              animate={{ width: `${publicPercent}%` }}
-              transition={{ duration: 1.2, ease: 'easeOut' }}
-            />
-            <motion.div
-              className="slider-thumb-glow"
-              initial={{ left: 0 }}
-              animate={{ left: `${publicPercent}%` }}
-              transition={{ duration: 1.2, ease: 'easeOut' }}
-            />
-          </div>
-          <div className="slider-footer-label">
-            <span>{publicPercent.toFixed(0)}% Publicly Shared</span>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* System Telemetry & Quick Ping */}
-      <motion.div
-        className="metric-card"
-        whileHover={{ y: -5, scale: 1.01 }}
-        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-      >
-        <div className="metric-header">
-          <span className="metric-label">System Telemetry</span>
-          <RiPulseLine className="metric-icon pulsing-heart" style={{ color: 'var(--violet-l)' }} />
-        </div>
-        <div className="metric-body-telemetry">
-          <div className="telemetry-wave-container">
-            <svg viewBox="0 0 120 40" className="telemetry-wave">
-              <path
-                d="M0,20 Q15,5 30,20 T60,20 T90,20 T120,20"
-                fill="none"
-                stroke="rgba(232, 160, 173, 0.2)"
-                strokeWidth="2"
-              />
-              <motion.path
-                d="M0,20 Q15,5 30,20 T60,20 T90,20 T120,20"
-                fill="none"
-                stroke="var(--violet)"
-                strokeWidth="2"
-                strokeDasharray="120"
-                initial={{ strokeDashoffset: 120 }}
-                animate={{ strokeDashoffset: [120, 0, -120] }}
-                transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
-              />
-            </svg>
-          </div>
-          <div className="telemetry-ping-box">
-            <button
-              className="btn-ping-launch"
-              onClick={handlePingAll}
-              disabled={isPingingAll || urlsCount === 0}
-            >
-              {isPingingAll ? (
-                <>
-                  <RiPulseLine className="spin-slow" style={{ animation: 'spin-slow 2s linear infinite' }} />
-                  <span>Checking {pingProgress.current}/{pingProgress.total}</span>
-                </>
-              ) : (
-                <>
-                  <RiPulseLine />
-                  <span>Ping All Links</span>
-                </>
-              )}
-            </button>
-          </div>
-        </div>
-        <div className="metric-footer">
-          <span>Active check state</span>
-        </div>
-      </motion.div>
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────
    DASHBOARD (main)
 ───────────────────────────────────────── */
 export default function Dashboard() {
@@ -882,26 +700,6 @@ export default function Dashboard() {
 
   // ← NEW: state for ping-to-top tracking
   const [pinnedByPing, setPinnedByPing] = useState(new Set());
-
-  // Search & Filter State
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeFilter, setActiveFilter] = useState('all');
-
-  // Mouse Parallax values
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      const { clientX, clientY } = e;
-      const x = (clientX - window.innerWidth / 2) / 35;
-      const y = (clientY - window.innerHeight / 2) / 35;
-      mouseX.set(x);
-      mouseY.set(y);
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [mouseX, mouseY]);
 
   const showToast = (message, type = 'success') => setToast({ message, type });
 
@@ -960,34 +758,10 @@ export default function Dashboard() {
       })
     : [];
 
-  const filteredUrls = sortedUrls.filter(url => {
-    const query = searchQuery.toLowerCase().trim();
-    const matchesSearch = query === '' ||
-      url.originalUrl.toLowerCase().includes(query) ||
-      (url.alias && url.alias.toLowerCase().includes(query)) ||
-      url.shortCode.toLowerCase().includes(query);
-
-    let matchesFilter = true;
-    const isExpired = url.expiresAt && new Date() > new Date(url.expiresAt);
-    if (activeFilter === 'favourites') {
-      matchesFilter = url.isFavourite;
-    } else if (activeFilter === 'active') {
-      matchesFilter = !isExpired;
-    } else if (activeFilter === 'public') {
-      matchesFilter = url.isPublic;
-    } else if (activeFilter === 'expired') {
-      matchesFilter = isExpired;
-    }
-
-    return matchesSearch && matchesFilter;
-  });
-
   return (
     <>
-      {/* Interactive Parallax Blobs */}
-      <motion.div className="parallax-blob blob-violet" style={{ x: mouseX, y: mouseY }} />
-      <motion.div className="parallax-blob blob-cyan" style={{ x: useTransform(mouseX, x => -x * 1.2), y: useTransform(mouseY, y => -y * 1.2) }} />
-      <motion.div className="parallax-blob blob-amber" style={{ x: useTransform(mouseX, x => x * 0.8), y: useTransform(mouseY, y => -y * 0.8) }} />
+      <div className="ambient ambient-1" />
+      <div className="ambient ambient-2" />
 
       <Navbar />
 
@@ -1018,16 +792,13 @@ export default function Dashboard() {
           </div>
         </motion.div>
 
-        {/* Futuristic Metrics Hub */}
-        <FuturisticMetricsPanel
-          totalClicks={totalClicks}
-          urlsCount={urls.length}
-          activeLinks={activeLinks}
-          publicLinks={publicLinks}
-          isPingingAll={isPingingAll}
-          handlePingAll={handlePingAll}
-          pingProgress={pingProgress}
-        />
+        {/* Stats ribbon */}
+        <div className="stats-ribbon">
+          <StatCell label="Total Links"  value={urls.length}                   icon={<RiLinkM />}        color="var(--violet-l)" />
+          <StatCell label="Total Clicks" value={totalClicks.toLocaleString()}  icon={<RiBarChartLine />} color="var(--cyan)"     />
+          <StatCell label="Active"       value={activeLinks}                   icon={<RiShieldLine />}   color="var(--emerald)"  />
+          <StatCell label="Public"       value={publicLinks}                   icon={<RiGlobalLine />}   color="var(--amber)"    />
+        </div>
 
         {/* Create form */}
         <AnimatePresence>
@@ -1087,68 +858,27 @@ export default function Dashboard() {
               <button className="btn-primary" onClick={() => setShowForm(true)}><RiAddLine /> Create First Link</button>
             </motion.div>
           ) : (
-            <>
-              {/* Search and Filters */}
-              <div className="search-filter-container">
-                <div className="search-box">
-                  <RiSearchLine className="search-icon" />
-                  <input
-                    type="text"
-                    placeholder="Search by URL, alias or short code..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="search-input"
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+              <AnimatePresence mode="popLayout">
+                {sortedUrls.map((url, idx) => (
+                  <UrlCard
+                    key={url._id}
+                    url={url}
+                    copied={copied}
+                    onCopy={handleCopy}
+                    onDelete={setDeleteUrl}
+                    onQR={setQrUrl}
+                    onEdit={setEditUrl}
+                    navigate={navigate}
+                    index={idx}
+                    toggleFavourite={toggleFavourite}
+                    pingUrl={pingUrl}
+                    // ← NEW: tells Dashboard to move this card to top after ping
+                    onPinned={(id) => setPinnedByPing(prev => new Set([...prev, id]))}
                   />
-                  {searchQuery && (
-                    <button className="search-clear" onClick={() => setSearchQuery('')}>
-                      <RiCloseLine />
-                    </button>
-                  )}
-                </div>
-                
-                <div className="filter-pills">
-                  {['all', 'favourites', 'active', 'public', 'expired'].map((filter) => (
-                    <button
-                      key={filter}
-                      onClick={() => setActiveFilter(filter)}
-                      className={`filter-pill ${activeFilter === filter ? 'active' : ''}`}
-                    >
-                      {filter.charAt(0).toUpperCase() + filter.slice(1)}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {filteredUrls.length === 0 ? (
-                <motion.div className="empty-state" initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ padding: '3rem 1.5rem' }}>
-                  <div className="empty-glyph" style={{ fontSize: '2.5rem' }}>🔍</div>
-                  <div style={{ fontFamily: 'var(--font-d)', fontSize: '1rem', fontWeight: 700, marginBottom: '0.4rem' }}>No matching links found</div>
-                  <div style={{ fontSize: '0.78rem', color: 'var(--text2)', marginBottom: '1.25rem' }}>Try modifying your search query or switching filters</div>
-                  <button className="btn-ghost" style={{ padding: '0.5rem 1rem', fontSize: '0.75rem' }} onClick={() => { setSearchQuery(''); setActiveFilter('all'); }}>Reset Search & Filters</button>
-                </motion.div>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-                  <AnimatePresence mode="popLayout">
-                    {filteredUrls.map((url, idx) => (
-                      <UrlCard
-                        key={url._id}
-                        url={url}
-                        copied={copied}
-                        onCopy={handleCopy}
-                        onDelete={setDeleteUrl}
-                        onQR={setQrUrl}
-                        onEdit={setEditUrl}
-                        navigate={navigate}
-                        index={idx}
-                        toggleFavourite={toggleFavourite}
-                        pingUrl={pingUrl}
-                        onPinned={(id) => setPinnedByPing(prev => new Set([...prev, id]))}
-                      />
-                    ))}
-                  </AnimatePresence>
-                </div>
-              )}
-            </>
+                ))}
+              </AnimatePresence>
+            </div>
           )}
         </div>
       </div>
