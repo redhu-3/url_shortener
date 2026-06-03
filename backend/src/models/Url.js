@@ -21,6 +21,12 @@ const urlSchema = new mongoose.Schema({
   expiresAt:    { type: Date, default: null },
   isActive:     { type: Boolean, default: true },
   isPublic:     { type: Boolean, default: false },
+  isFavourite:  { type: Boolean, default: false },
+  pingResult:   {
+    status:       { type: String, enum: ['live', 'redirect', 'dead'], default: null },
+    responseTime: { type: Number, default: null },
+    checkedAt:    { type: Date, default: null }
+  }
 }, { timestamps: true });
 
 // Virtual: the actual short identifier used in URLs

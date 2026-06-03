@@ -1,69 +1,5 @@
-// import { nanoid } from 'nanoid';
-// import Url from '../models/Url.js';
-// import Visit from '../models/Visit.js';
-// import { isValidUrl } from '../utils/validateUrl.js';
-
-// export const createUrl = async (req, res) => {
-//   try {
-//     const { originalUrl } = req.body;
-//     if (!originalUrl) return res.status(400).json({ message: 'URL is required' });
-//     if (!isValidUrl(originalUrl)) return res.status(400).json({ message: 'Invalid URL format' });
-
-//     const shortCode = nanoid(7);
-//     const url = await Url.create({ originalUrl, shortCode, userId: req.user.id });
-
-//     res.status(201).json(url);
-//   } catch (err) {
-//     res.status(500).json({ message: 'Server error', error: err.message });
-//   }
-// };
-
-// export const getUserUrls = async (req, res) => {
-//   try {
-//     const urls = await Url.find({ userId: req.user.id }).sort({ createdAt: -1 });
-//     res.json(urls);
-//   } catch (err) {
-//     res.status(500).json({ message: 'Server error', error: err.message });
-//   }
-// };
-
-// export const deleteUrl = async (req, res) => {
-//   try {
-//     const url = await Url.findById(req.params.id);
-//     if (!url) return res.status(404).json({ message: 'URL not found' });
-//     if (url.userId.toString() !== req.user.id)
-//       return res.status(403).json({ message: 'Unauthorized' });
-
-//     await Url.findByIdAndDelete(req.params.id);
-//     await Visit.deleteMany({ urlId: req.params.id });
-//     res.json({ message: 'URL deleted' });
-//   } catch (err) {
-//     res.status(500).json({ message: 'Server error', error: err.message });
-//   }
-// };
-
-// export const redirectUrl = async (req, res) => {
-//   try {
-//     const url = await Url.findOneAndUpdate(
-//       { shortCode: req.params.shortCode },
-//       { $inc: { clickCount: 1 } },
-//       { new: true }
-//     );
-//     if (!url) return res.status(404).json({ message: 'Short URL not found' });
-
-//     await Visit.create({
-//       urlId: url._id,
-//       ip: req.ip || req.connection.remoteAddress,
-//       userAgent: req.headers['user-agent'] || 'unknown',
-//     });
-
-//     res.redirect(url.originalUrl);
-//   } catch (err) {
-//     res.status(500).json({ message: 'Server error', error: err.message });
-//   }
-// };
-
 import { nanoid } from 'nanoid';
+import bcrypt from 'bcryptjs';
 import Url from '../models/Url.js';
 import Visit from '../models/Visit.js';
 import { isValidUrl } from '../utils/validateUrl.js';
@@ -83,7 +19,6 @@ export const createUrl = async (req, res) => {
     if (!originalUrl) return res.status(400).json({ message: 'URL is required' });
     if (!isValidUrl(originalUrl)) return res.status(400).json({ message: 'Invalid URL format' });
 
-    // Alias validation
     if (alias) {
       if (!isAliasValid(alias))
         return res.status(400).json({ message: 'Alias must be 3-30 chars: letters, numbers, - or _' });
@@ -93,25 +28,24 @@ export const createUrl = async (req, res) => {
       if (exists) return res.status(409).json({ message: 'Alias already taken' });
     }
 
-   // const shortCode = nanoid(7);
-let shortCode;
-let exists;
-
-do {
-  shortCode = nanoid(7);
-  exists = await Url.findOne({ shortCode });
-} while (exists);
+    let shortCode;
+    let exists;
+    do {
+      shortCode = nanoid(7);
+      exists = await Url.findOne({ shortCode });
+    } while (exists);
 
     const url = await Url.create({
       originalUrl,
       shortCode,
-      ...(alias && {alias}),
+      ...(alias && { alias }),
       userId: req.user.id,
       expiresAt: expiresAt ? new Date(expiresAt) : null,
       isPublic: !!isPublic,
     });
 
-    res.status(201).json(url);
+    const urlObj = url.toObject();
+    res.status(201).json(urlObj);
   } catch (err) {
     if (err.code === 11000) return res.status(409).json({ message: 'Alias already taken' });
     res.status(500).json({ message: 'Server error', error: err.message });
@@ -121,7 +55,7 @@ do {
 /* ── BULK CREATE via CSV array ── */
 export const bulkCreateUrls = async (req, res) => {
   try {
-    const { urls } = req.body; // [{ originalUrl, alias?, expiresAt? }]
+    const { urls } = req.body;
     if (!Array.isArray(urls) || urls.length === 0)
       return res.status(400).json({ message: 'Provide a urls array' });
     if (urls.length > 100)
@@ -134,7 +68,6 @@ export const bulkCreateUrls = async (req, res) => {
         continue;
       }
       try {
-        // Build the document — only include alias if it's actually valid & available
         const docData = {
           originalUrl: item.originalUrl,
           userId: req.user.id,
@@ -142,7 +75,6 @@ export const bulkCreateUrls = async (req, res) => {
           isPublic: false,
         };
 
-        // Generate a unique shortCode (avoid collisions)
         let shortCode;
         let codeExists;
         do {
@@ -151,8 +83,6 @@ export const bulkCreateUrls = async (req, res) => {
         } while (codeExists);
         docData.shortCode = shortCode;
 
-        // Only set alias when provided and valid — never set alias to null
-        // (setting alias: null causes duplicate key errors on the sparse unique index)
         if (item.alias && isAliasValid(item.alias) && !RESERVED.includes(item.alias.toLowerCase())) {
           const aliasExists = await Url.findOne({ $or: [{ shortCode: item.alias }, { alias: item.alias }] });
           if (!aliasExists) {
@@ -176,7 +106,7 @@ export const bulkCreateUrls = async (req, res) => {
 /* ── LIST user URLs ── */
 export const getUserUrls = async (req, res) => {
   try {
-    const urls = await Url.find({ userId: req.user.id }).sort({ createdAt: -1 });
+    const urls = await Url.find({ userId: req.user.id }).sort({ createdAt: -1 }).lean();
     res.json(urls);
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
@@ -199,10 +129,10 @@ export const deleteUrl = async (req, res) => {
   }
 };
 
-/* ── EDIT destination URL ── */
+/* ── EDIT ── */
 export const editUrl = async (req, res) => {
   try {
-    const { originalUrl, expiresAt, isPublic, alias } = req.body;
+    const { originalUrl, expiresAt, isPublic, alias, isFavourite } = req.body;
     const url = await Url.findById(req.params.id);
     if (!url) return res.status(404).json({ message: 'URL not found' });
     if (url.userId.toString() !== req.user.id)
@@ -214,10 +144,12 @@ export const editUrl = async (req, res) => {
     }
     if (expiresAt !== undefined) url.expiresAt = expiresAt ? new Date(expiresAt) : null;
     if (isPublic !== undefined) url.isPublic = !!isPublic;
+    if (isFavourite !== undefined) url.isFavourite = !!isFavourite;
 
     if (alias !== undefined) {
       if (alias === null || alias === '') {
         url.alias = undefined;
+        await Url.updateOne({ _id: url._id }, { $unset: { alias: 1 } });
       } else {
         if (!isAliasValid(alias))
           return res.status(400).json({ message: 'Invalid alias format' });
@@ -230,7 +162,8 @@ export const editUrl = async (req, res) => {
     }
 
     await url.save();
-    res.json(url);
+    const updated = await Url.findById(url._id).lean();
+    res.json(updated);
   } catch (err) {
     if (err.code === 11000) return res.status(409).json({ message: 'Alias already taken' });
     res.status(500).json({ message: 'Server error', error: err.message });
@@ -241,22 +174,17 @@ export const editUrl = async (req, res) => {
 export const redirectUrl = async (req, res) => {
   try {
     const code = req.params.shortCode;
-
-    // Look up by alias first, then shortCode
-    const url = await Url.findOneAndUpdate(
-      { $or: [{ alias: code }, { shortCode: code }] },
-      { $inc: { clickCount: 1 } },
-      { new: true }
-    );
+    const url = await Url.findOne({ $or: [{ alias: code }, { shortCode: code }] });
 
     if (!url) return res.status(404).send('Short URL not found');
 
-    // Expiry check
     if (url.expiresAt && new Date() > url.expiresAt) {
       return res.status(410).send('This link has expired');
     }
 
-    // Parse UA + get geo (non-blocking)
+    url.clickCount += 1;
+    await url.save();
+
     const ua = req.headers['user-agent'] || '';
     const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.ip || '';
     const referrer = req.headers.referer || req.headers.referrer || 'Direct';
@@ -347,3 +275,83 @@ export const getPublicUrls = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
+
+/* ── PING HELPER ── */
+const pingUrlHelper = async (urlStr) => {
+  const startTime = Date.now();
+  try {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), 5000);
+    const res = await fetch(urlStr, {
+      method: 'HEAD',
+      signal: controller.signal,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      }
+    });
+    clearTimeout(id);
+    const responseTime = Date.now() - startTime;
+    const status = res.status;
+    let resultStatus = 'dead';
+    if (status >= 200 && status <= 399) {
+      resultStatus = (status === 301 || status === 302) ? 'redirect' : 'live';
+    }
+    return { status: resultStatus, responseTime };
+  } catch (err) {
+    try {
+      const startTimeGet = Date.now();
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), 5000);
+      const res = await fetch(urlStr, {
+        method: 'GET',
+        signal: controller.signal,
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        }
+      });
+      clearTimeout(id);
+      const responseTime = Date.now() - startTimeGet;
+      const status = res.status;
+      let resultStatus = 'dead';
+      if (status >= 200 && status <= 399) {
+        resultStatus = (status === 301 || status === 302) ? 'redirect' : 'live';
+      }
+      return { status: resultStatus, responseTime };
+    } catch (err2) {
+      return { status: 'dead', responseTime: Date.now() - startTime };
+    }
+  }
+};
+
+
+/* ── PING HEALTH ── */
+export const pingUrl = async (req, res) => {
+  try {
+    const url = await Url.findById(req.params.id);
+    if (!url) return res.status(404).json({ message: 'URL not found' });
+    if (url.userId.toString() !== req.user.id)
+      return res.status(403).json({ message: 'Unauthorized' });
+
+    const cacheDuration = 5 * 60 * 1000;
+    if (
+      url.pingResult &&
+      url.pingResult.checkedAt &&
+      (Date.now() - new Date(url.pingResult.checkedAt).getTime()) < cacheDuration
+    ) {
+      return res.json(url.pingResult);
+    }
+
+    const result = await pingUrlHelper(url.originalUrl);
+    url.pingResult = {
+      status: result.status,
+      responseTime: result.responseTime,
+      checkedAt: new Date(),
+    };
+    await url.save();
+
+    res.json(url.pingResult);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+

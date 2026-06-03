@@ -76,24 +76,17 @@
   padding: 0.6rem 1.2rem;
   border-radius: 12px;
   border: 1px solid var(--border-v);
-  background: rgba(139,92,246,0.04);
+  background: rgba(var(--violet-rgb), 0.04);
   color: var(--text-primary);
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .copy-btn-public:hover {
-  background: rgba(139,92,246,0.1);
+  background: rgba(var(--violet-rgb), 0.1);
   border-color: var(--violet);
   color: var(--violet-l);
   transform: translateY(-1px);
-  box-shadow: 0 4px 15px rgba(139,92,246,0.12);
-}
-[data-theme="light"] .copy-btn-public {
-  background: rgba(124,58,237,0.03);
-}
-[data-theme="light"] .copy-btn-public:hover {
-  background: rgba(124,58,237,0.08);
-  box-shadow: 0 4px 15px rgba(124,58,237,0.08);
+  box-shadow: 0 4px 15px rgba(var(--violet-rgb), 0.12);
 }
 
 /* CTA Register button */
@@ -111,17 +104,14 @@
   background-size: 200% 200%;
   color: #fff;
   text-decoration: none;
-  box-shadow: 0 4px 18px rgba(139,92,246,0.3), 0 0 0 1px rgba(139,92,246,0.15);
+  box-shadow: 0 4px 18px rgba(var(--violet-rgb), 0.3), 0 0 0 1px rgba(var(--violet-rgb), 0.15);
   animation: gradientShift 5s ease infinite;
   transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .cta-register-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 28px rgba(139,92,246,0.4), 0 0 0 1px rgba(139,92,246,0.3);
+  box-shadow: 0 8px 28px rgba(var(--violet-rgb), 0.4), 0 0 0 1px rgba(var(--violet-rgb), 0.3);
   filter: brightness(1.06);
-}
-[data-theme="light"] .cta-register-btn {
-  box-shadow: 0 4px 18px rgba(124,58,237,0.25), 0 0 0 1px rgba(124,58,237,0.1);
 }
 
 /* Stats Cards Grid 4 Columns */

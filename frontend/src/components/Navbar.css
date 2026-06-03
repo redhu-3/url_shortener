@@ -51,7 +51,7 @@
   font-family: var(--font-m);
   font-size: 0.7rem;
   letter-spacing: 0.04em;
-  color: var(--text3);
+  color: var(--text-muted);
   text-decoration: none;
   padding: 0.4rem 0.85rem;
   border-radius: 8px;
@@ -60,12 +60,12 @@
 }
 .nav-link:hover {
   color: var(--text);
-  background: rgba(139,92,246,0.08);
+  background: rgba(var(--violet-rgb), 0.08);
   border-color: var(--border-v);
 }
 .nav-link.active {
   color: var(--violet-l);
-  background: rgba(139,92,246,0.1);
+  background: rgba(var(--violet-rgb), 0.10);
   border-color: var(--border-v);
 }
 
@@ -79,7 +79,7 @@
 .nav-user {
   font-family: var(--font-m);
   font-size: 0.68rem;
-  color: var(--text2);
+  color: var(--text-secondary);
   padding: 0.32rem 0.85rem;
   border: 1px solid var(--border);
   border-radius: 999px;
@@ -106,7 +106,7 @@
   cursor: pointer;
   border: 1px solid var(--border);
   background: rgba(255,255,255,0.03);
-  color: var(--text2);
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -117,7 +117,7 @@
 .theme-toggle:hover {
   border-color: var(--violet);
   color: var(--violet-l);
-  background: rgba(139,92,246,0.1);
+  background: rgba(var(--violet-rgb), 0.10);
 }
 [data-theme="light"] .theme-toggle {
   background: rgba(0,0,0,0.04);
@@ -130,16 +130,16 @@
   letter-spacing: 0.04em;
   cursor: pointer;
   background: transparent;
-  border: 1px solid rgba(251,113,133,0.3);
-  color: var(--rose);
+  border: 1px solid rgba(var(--violet-rgb), 0.3);
+  color: var(--violet);
   padding: 0.32rem 0.9rem;
   border-radius: 999px;
   transition: all 0.2s;
   white-space: nowrap;
 }
 .btn-logout:hover {
-  background: rgba(251,113,133,0.1);
-  border-color: var(--rose);
+  background: rgba(var(--violet-rgb), 0.10);
+  border-color: var(--violet);
 }
 
 /* mobile menu toggle */
@@ -150,7 +150,7 @@
   border-radius: 10px;
   border: 1px solid var(--border);
   background: transparent;
-  color: var(--text2);
+  color: var(--text-secondary);
   align-items: center;
   justify-content: center;
   font-size: 1.1rem;
@@ -182,7 +182,7 @@
   font-family: var(--font-m);
   font-size: 0.75rem;
   letter-spacing: 0.04em;
-  color: var(--text2);
+  color: var(--text-secondary);
   text-decoration: none;
   padding: 0.65rem 1rem;
   border-radius: 10px;
@@ -195,7 +195,7 @@
 .mobile-nav-link:hover {
   color: var(--violet-l);
   border-color: var(--border-v);
-  background: rgba(139,92,246,0.06);
+  background: rgba(var(--violet-rgb), 0.06);
 }
 .mobile-divider {
   border: none;
@@ -208,4 +208,56 @@
   .nav-user   { display: none; }
   .menu-toggle { display: flex; }
   .btn-logout { display: none; }
+}
+
+/* favourites toggle button */
+.fav-toggle-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.03);
+  color: var(--amber);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  position: relative;
+}
+.fav-toggle-btn:hover {
+  border-color: var(--border-v);
+  background: rgba(201,169,110,0.08);
+  transform: scale(1.03);
+}
+.fav-toggle-btn:active {
+  transform: scale(0.97);
+}
+[data-theme="light"] .fav-toggle-btn {
+  background: rgba(0,0,0,0.04);
+}
+[data-theme="light"] .fav-toggle-btn:hover {
+  background: rgba(201,153,58,0.08);
+}
+
+.fav-badge-nav {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: var(--violet);
+  color: #fff;
+  font-family: var(--font-m);
+  font-size: 0.58rem;
+  font-weight: 700;
+  min-width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+  border: 1.5px solid var(--bg);
+  box-shadow: var(--shadow-sm);
 }

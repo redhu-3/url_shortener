@@ -31,18 +31,41 @@ function useCurrentTheme() {
   return theme;
 }
 
-const themeColors = (theme) => ({
-  gridColor: theme === 'light' ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.03)',
-  tickColor: theme === 'light' ? '#64748b' : '#4a4a6a',
-  tooltipBg: theme === 'light' ? '#ffffff' : '#1a1a26',
-  tooltipBorder: theme === 'light' ? 'rgba(124,58,237,0.2)' : 'rgba(255,255,255,0.1)',
-  tooltipTitle: theme === 'light' ? '#0f172a' : '#f0f0f8',
-  tooltipBody: theme === 'light' ? '#475569' : '#9898b8',
-  donutBorder: theme === 'light' ? '#ffffff' : '#111118',
-  barGradStart: theme === 'light' ? 'rgba(6,182,212,0.7)' : 'rgba(34,211,238,0.8)',
-  barGradEnd: theme === 'light' ? 'rgba(6,182,212,0.03)' : 'rgba(34,211,238,0.05)',
-  barBorder: theme === 'light' ? 'rgba(6,182,212,0.8)' : 'rgba(34,211,238,0.9)',
-});
+const themeColors = (theme) => {
+  const cs = getComputedStyle(document.documentElement);
+  const violetRgb = cs.getPropertyValue('--violet-rgb').trim() || '201, 105, 122';
+  const cyanRgb = cs.getPropertyValue('--cyan-rgb').trim() || '201, 169, 110';
+  return {
+    gridColor: theme === 'light' ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.03)',
+    tickColor: theme === 'light' ? '#4a4668' : '#4a4a6a',
+    tooltipBg: theme === 'light' ? '#ffffff' : '#1a1a26',
+    tooltipBorder: `rgba(${violetRgb}, 0.2)`,
+    tooltipTitle: theme === 'light' ? '#1c1a2e' : '#f0f0f8',
+    tooltipBody: theme === 'light' ? '#4a4668' : '#9898b8',
+    donutBorder: theme === 'light' ? '#ffffff' : '#111118',
+    barGradStart: `rgba(${cyanRgb}, 0.8)`,
+    barGradEnd: `rgba(${cyanRgb}, 0.05)`,
+    barBorder: `rgba(${cyanRgb}, 0.9)`,
+  };
+};
+
+const getThemeDonutColors = () => {
+  const cs = getComputedStyle(document.documentElement);
+  const violet = cs.getPropertyValue('--violet').trim() || '#c9697a';
+  const violetL = cs.getPropertyValue('--violet-l').trim() || '#e8a0ad';
+  const violetD = cs.getPropertyValue('--violet-d').trim() || '#8f3f4d';
+  const cyan = cs.getPropertyValue('--cyan').trim() || '#c9a96e';
+  const amber = cs.getPropertyValue('--amber').trim() || '#c9a96e';
+  const emerald = cs.getPropertyValue('--emerald').trim() || '#34d399';
+
+  return {
+    browsers: [violet, violetL, cyan, amber, violetD, emerald],
+    os: [cyan, violet, violetL, amber, violetD],
+    devices: [violet, violetL, cyan],
+    countries: [cyan, violet, violetL, amber, violetD, emerald],
+    referrers: [violetD, amber, emerald, cyan, violetL, violet],
+  };
+};
 
 /* ── Skeleton ── */
 const Sk = ({ className }) => <div className={`skeleton ${className}`} />;
@@ -222,11 +245,7 @@ export default function PublicStats() {
     setToast({ message: 'Copied Short URL!', type: 'success' });
   };
 
-  const donut_colors_browser  = ['#8b5cf6','#22d3ee','#34d399','#fbbf24','#fb7185','#a78bfa'];
-  const donut_colors_os       = ['#06b6d4','#8b5cf6','#34d399','#fbbf24','#fb7185'];
-  const donut_colors_device   = ['#8b5cf6','#22d3ee','#34d399'];
-  const donut_colors_country  = ['#34d399','#8b5cf6','#22d3ee','#fbbf24','#fb7185','#a78bfa'];
-  const donut_colors_referrer = ['#fb7185','#fbbf24','#34d399','#22d3ee','#8b5cf6','#a78bfa'];
+  const donutColors = getThemeDonutColors();
 
   const maxDay = data ? Math.max(...data.chartData.data) : 0;
   const bestDay = data ? data.chartData.labels[data.chartData.data.indexOf(maxDay)] : null;
@@ -332,18 +351,18 @@ export default function PublicStats() {
             <h2 className="section-subtitle-public">Breakdowns & Analytics</h2>
             <div className="public-breakdown-grid">
               {[
-                { title: 'Browsers', key: 'browsers', colors: donut_colors_browser, icon: <RiBrainLine /> },
-                { title: 'Operating Systems', key: 'os', colors: donut_colors_os, icon: <RiComputerLine /> },
-                { title: 'Devices', key: 'devices', colors: donut_colors_device, icon: <RiSmartphoneLine /> },
-                { title: 'Countries', key: 'countries', colors: donut_colors_country, icon: <RiGlobalLine /> },
-                { title: 'Referrers', key: 'referrers', colors: donut_colors_referrer, icon: <RiShareLine /> },
+                { title: 'Browsers', key: 'browsers', icon: <RiBrainLine /> },
+                { title: 'Operating Systems', key: 'os', icon: <RiComputerLine /> },
+                { title: 'Devices', key: 'devices', icon: <RiSmartphoneLine /> },
+                { title: 'Countries', key: 'countries', icon: <RiGlobalLine /> },
+                { title: 'Referrers', key: 'referrers', icon: <RiShareLine /> },
               ].map((chart, i) => (
                 <motion.div key={chart.title} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + i * 0.05 }} className="glass-card" style={{ padding: '1.1rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
                     <span style={{ color: 'var(--text-secondary)', display: 'inline-flex' }}>{chart.icon}</span>
                     <h3 style={{ fontSize: '0.8rem', fontWeight: 700, fontFamily: 'var(--font-d)' }}>{chart.title}</h3>
                   </div>
-                  <DonutChart data={data.breakdown[chart.key]} colors={chart.colors} theme={theme} />
+                  <DonutChart data={data.breakdown[chart.key]} colors={donutColors[chart.key]} theme={theme} />
                 </motion.div>
               ))}
             </div>

@@ -16,13 +16,63 @@ Chart.register(...registerables);
 
 const BASE = import.meta.env.VITE_API_URL || 'https://url-shortener-1-mxet.onrender.com';
 
+/* ── Theme helper ── */
+function useCurrentTheme() {
+  const [theme, setTheme] = useState(() =>
+    document.documentElement.getAttribute('data-theme') || 'dark'
+  );
+  useEffect(() => {
+    const obs = new MutationObserver(() => {
+      setTheme(document.documentElement.getAttribute('data-theme') || 'dark');
+    });
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    return () => obs.disconnect();
+  }, []);
+  return theme;
+}
+
+const themeColors = (theme) => {
+  const cs = getComputedStyle(document.documentElement);
+  const violetRgb = cs.getPropertyValue('--violet-rgb').trim() || '201, 105, 122';
+  return {
+    gridColor: theme === 'light' ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.03)',
+    tickColor: theme === 'light' ? '#4a4668' : '#4a4a6a',
+    tooltipBg: theme === 'light' ? '#ffffff' : '#1a1a26',
+    tooltipBorder: `rgba(${violetRgb}, 0.2)`,
+    tooltipTitle: theme === 'light' ? '#1c1a2e' : '#f0f0f8',
+    tooltipBody: theme === 'light' ? '#4a4668' : '#9898b8',
+    donutBorder: theme === 'light' ? '#ffffff' : '#111118',
+    barGradStart: `rgba(${violetRgb}, 0.8)`,
+    barGradEnd: `rgba(${violetRgb}, 0.05)`,
+    barBorder: `rgba(${violetRgb}, 0.9)`,
+  };
+};
+
+const getThemeDonutColors = () => {
+  const cs = getComputedStyle(document.documentElement);
+  const violet = cs.getPropertyValue('--violet').trim() || '#c9697a';
+  const violetL = cs.getPropertyValue('--violet-l').trim() || '#e8a0ad';
+  const violetD = cs.getPropertyValue('--violet-d').trim() || '#8f3f4d';
+  const cyan = cs.getPropertyValue('--cyan').trim() || '#c9a96e';
+  const amber = cs.getPropertyValue('--amber').trim() || '#c9a96e';
+  const emerald = cs.getPropertyValue('--emerald').trim() || '#34d399';
+
+  return {
+    browser: [violet, violetL, cyan, amber, violetD, emerald],
+    os: [cyan, violet, violetL, amber, violetD],
+    device: [violet, violetL, cyan],
+    country: [cyan, violet, violetL, amber, violetD, emerald],
+  };
+};
+
 /* ── Skeleton ── */
 const Sk = ({ className }) => <div className={`skeleton ${className}`} />;
 
 /* ── Donut chart component ── */
-function DonutChart({ data, colors }) {
+function DonutChart({ data, colors, theme }) {
   const ref = useRef(null);
   const inst = useRef(null);
+  const tc = themeColors(theme);
 
   useEffect(() => {
     if (!data?.length || !ref.current) return;
@@ -35,7 +85,7 @@ function DonutChart({ data, colors }) {
         datasets: [{
           data: data.map((d) => d.count),
           backgroundColor: colors,
-          borderColor: '#111118',
+          borderColor: tc.donutBorder,
           borderWidth: 3,
           hoverBorderWidth: 0,
         }],
@@ -49,17 +99,17 @@ function DonutChart({ data, colors }) {
             callbacks: {
               label: (ctx) => ` ${ctx.label}: ${ctx.raw} (${Math.round(ctx.raw / total * 100)}%)`,
             },
-            backgroundColor: '#1a1a26',
-            borderColor: 'rgba(255,255,255,0.1)',
+            backgroundColor: tc.tooltipBg,
+            borderColor: tc.tooltipBorder,
             borderWidth: 1,
-            titleColor: '#f0f0f8',
-            bodyColor: '#9898b8',
+            titleColor: tc.tooltipTitle,
+            bodyColor: tc.tooltipBody,
           },
         },
       },
     });
     return () => inst.current?.destroy();
-  }, [data, colors]);
+  }, [data, colors, theme]);
 
   if (!data?.length) return <p className="text-center text-sm py-8" style={{ color: 'var(--text-muted)' }}>No data yet</p>;
 
@@ -83,9 +133,10 @@ function DonutChart({ data, colors }) {
 }
 
 /* ── Bar chart (daily clicks) ── */
-function DailyChart({ chartData }) {
+function DailyChart({ chartData, theme }) {
   const ref = useRef(null);
   const inst = useRef(null);
+  const tc = themeColors(theme);
 
   useEffect(() => {
     if (!chartData || !ref.current) return;
@@ -104,11 +155,11 @@ function DailyChart({ chartData }) {
           data: chartData.data,
           backgroundColor: (ctx) => {
             const grad = ctx.chart.ctx.createLinearGradient(0, 0, 0, 220);
-            grad.addColorStop(0, 'rgba(124,58,237,0.8)');
-            grad.addColorStop(1, 'rgba(124,58,237,0.1)');
+            grad.addColorStop(0, tc.barGradStart);
+            grad.addColorStop(1, tc.barGradEnd);
             return grad;
           },
-          borderColor: 'rgba(124,58,237,0.9)',
+          borderColor: tc.barBorder,
           borderWidth: 1,
           borderRadius: 6,
           borderSkipped: false,
@@ -119,21 +170,21 @@ function DailyChart({ chartData }) {
         plugins: {
           legend: { display: false },
           tooltip: {
-            backgroundColor: '#1a1a26',
-            borderColor: 'rgba(124,58,237,0.4)',
+            backgroundColor: tc.tooltipBg,
+            borderColor: tc.tooltipBorder,
             borderWidth: 1,
-            titleColor: '#f0f0f8',
-            bodyColor: '#9898b8',
+            titleColor: tc.tooltipTitle,
+            bodyColor: tc.tooltipBody,
           },
         },
         scales: {
-          x: { ticks: { color: '#4a4a6a', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
-          y: { ticks: { color: '#4a4a6a', stepSize: 1, font: { size: 11 } }, grid: { color: 'rgba(255,255,255,0.04)' }, beginAtZero: true },
+          x: { ticks: { color: tc.tickColor, font: { size: 11 } }, grid: { color: tc.gridColor } },
+          y: { ticks: { color: tc.tickColor, stepSize: 1, font: { size: 11 } }, grid: { color: tc.gridColor }, beginAtZero: true },
         },
       },
     });
     return () => inst.current?.destroy();
-  }, [chartData]);
+  }, [chartData, theme]);
 
   return <canvas ref={ref} height={80} />;
 }
@@ -171,6 +222,7 @@ export default function Analytics() {
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState(null);
   const [copied, setCopied] = useState(false);
+  const theme = useCurrentTheme();
 
   useEffect(() => {
     api.get(`/api/analytics/${urlId}`)
@@ -187,10 +239,7 @@ export default function Analytics() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const donut_colors_browser  = ['#8b5cf6','#22d3ee','#34d399','#fbbf24','#fb7185','#a78bfa'];
-  const donut_colors_os       = ['#06b6d4','#8b5cf6','#34d399','#fbbf24','#fb7185'];
-  const donut_colors_device   = ['#8b5cf6','#22d3ee','#34d399'];
-  const donut_colors_country  = ['#34d399','#8b5cf6','#22d3ee','#fbbf24','#fb7185','#a78bfa'];
+  const donutColors = getThemeDonutColors();
 
   const maxDay = data ? Math.max(...data.chartData.data) : 0;
   const bestDay = data ? data.chartData.labels[data.chartData.data.indexOf(maxDay)] : null;
@@ -275,23 +324,23 @@ export default function Analytics() {
                   </span>
                 )}
               </div>
-              <DailyChart chartData={data.chartData} />
+              <DailyChart chartData={data.chartData} theme={theme} />
             </div>
 
             {/* Breakdown row */}
             <div className="breakdown-grid">
               {[
-                { title: 'Browsers', key: 'browsers', colors: donut_colors_browser, icon: <RiBrainLine /> },
-                { title: 'Operating Systems', key: 'os', colors: donut_colors_os, icon: <RiComputerLine /> },
-                { title: 'Devices', key: 'devices', colors: donut_colors_device, icon: <RiSmartphoneLine /> },
-                { title: 'Countries', key: 'countries', colors: donut_colors_country, icon: <RiGlobalLine /> },
+                { title: 'Browsers', key: 'browsers', colors: donutColors.browser, icon: <RiBrainLine /> },
+                { title: 'Operating Systems', key: 'os', colors: donutColors.os, icon: <RiComputerLine /> },
+                { title: 'Devices', key: 'devices', colors: donutColors.device, icon: <RiSmartphoneLine /> },
+                { title: 'Countries', key: 'countries', colors: donutColors.country, icon: <RiGlobalLine /> },
               ].map((chart, i) => (
                 <motion.div key={chart.title} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + i * 0.07 }} className="glass-card" style={{ padding: '1.25rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
                     <span style={{ color: 'var(--text-secondary)', display: 'inline-flex' }}>{chart.icon}</span>
                     <h3 style={{ fontSize: '0.85rem', fontWeight: 700, fontFamily: 'var(--font-d)' }}>{chart.title}</h3>
                   </div>
-                  <DonutChart data={data.breakdown[chart.key]} colors={chart.colors} />
+                  <DonutChart data={data.breakdown[chart.key]} colors={chart.colors} theme={theme} />
                 </motion.div>
               ))}
             </div>

@@ -44,7 +44,7 @@
   align-items: center;
   justify-content: center;
   font-size: 16px;
-  box-shadow: 0 0 30px rgba(124, 58, 237, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  box-shadow: var(--shadow-glow), inset 0 1px 0 rgba(255, 255, 255, 0.4);
   color: #fff;
 }
 
@@ -111,7 +111,7 @@
   width: 520px;
   height: 520px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(124, 58, 237, 0.14) 0%, transparent 70%);
+  background: radial-gradient(circle, var(--accent-soft) 0%, transparent 70%);
   filter: blur(2px);
   pointer-events: none;
 }
@@ -123,7 +123,7 @@
   width: 420px;
   height: 420px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(6, 182, 212, 0.12) 0%, transparent 70%);
+  background: radial-gradient(circle, var(--border-c) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -158,8 +158,8 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  background: rgba(124, 58, 237, 0.15);
-  border: 1px solid rgba(124, 58, 237, 0.35);
+  background: var(--chip-bg);
+  border: 1px solid var(--border-v);
   border-radius: 999px;
   padding: 0.45rem 1rem;
   font-size: 0.8rem;
@@ -170,17 +170,14 @@
   letter-spacing: 0.08em;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
-[data-theme="light"] .landing-hero-badge {
-  background: rgba(124, 58, 237, 0.1);
-}
 
 .landing-hero-badge-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #22c55e;
+  background: var(--emerald);
   display: inline-block;
-  box-shadow: 0 0 10px #22c55e;
+  box-shadow: 0 0 10px var(--emerald);
 }
 
 .landing-hero-title {
@@ -191,10 +188,10 @@
   margin-bottom: 1.2rem;
   animation: fade-up 0.6s 0.1s ease both;
   font-family: var(--font-d);
-  background: linear-gradient(180deg, #ffffff, #c7c9ff);
+  background: linear-gradient(180deg, var(--text), var(--violet-l));
   -webkit-background-clip: text;
   color: transparent;
-  text-shadow: 0 0 30px rgba(124, 58, 237, 0.18);
+  text-shadow: var(--shadow-glow);
 }
 [data-theme="light"] .landing-hero-title {
   background: none;
@@ -255,7 +252,7 @@
 /* Demo Card */
 .demo-card {
   position: relative;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
+  background: var(--glass-bg);
   border: 1px solid var(--border-v);
   border-radius: 26px;
   padding: 2rem;
@@ -265,9 +262,6 @@
   width: 100%;
   overflow: hidden;
   backdrop-filter: blur(14px);
-}
-[data-theme="light"] .demo-card {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(250, 250, 255, 0.9) 100%);
 }
 
 .demo-card-shine {
@@ -350,12 +344,12 @@
   cursor: pointer;
   transition: transform 160ms, box-shadow 160ms, filter 160ms;
   white-space: nowrap;
-  box-shadow: 0 10px 30px rgba(124, 58, 237, 0.35);
+  box-shadow: var(--shadow-glow);
   animation: gradientShift 5s ease infinite;
 }
 .demo-card-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 14px 40px rgba(124, 58, 237, 0.45);
+  box-shadow: var(--shadow-glow);
   filter: brightness(1.06);
 }
 
@@ -387,12 +381,12 @@
   font-size: 0.8rem;
   font-weight: 800;
   cursor: pointer;
-  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.35);
+  box-shadow: var(--shadow-glow);
   transition: transform 140ms, box-shadow 140ms;
 }
 .demo-card-copy-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 12px 28px rgba(124, 58, 237, 0.5);
+  box-shadow: var(--shadow-glow);
 }
 
 .demo-card-stats {
@@ -510,7 +504,7 @@
   justify-content: center;
   font-size: 26px;
   margin-bottom: 1.1rem;
-  box-shadow: inset 0 0 14px rgba(124, 58, 237, 0.18);
+  box-shadow: inset 0 0 14px var(--border-v);
 }
 
 .feature-card-title {
@@ -581,7 +575,7 @@
   justify-content: center;
   font-size: 30px;
   margin: 0 auto 1.2rem;
-  box-shadow: 0 0 40px rgba(124, 58, 237, 0.45);
+  box-shadow: var(--shadow-glow);
 }
 
 .how-step-tag {
@@ -658,12 +652,12 @@
 
 /* CTA Section */
 .cta-section {
-  background: linear-gradient(135deg, #5b21b6 0%, #7c3aed 40%, #06b6d4 100%);
+  background: var(--accent-grad);
   padding: 6rem 1.5rem;
   text-align: center;
   position: relative;
   overflow: hidden;
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-top: 1px solid var(--border);
 }
 
 .cta-overlay {
@@ -709,7 +703,7 @@
 
 .cta-btn-primary {
   background: #fff;
-  color: #5b21b6;
+  color: var(--violet-d);
   border: none;
   border-radius: 16px;
   padding: 1rem 2.3rem;
@@ -770,4 +764,78 @@
 .landing-footer-copy {
   color: var(--text-muted);
   font-size: 0.82rem;
+}
+
+/* EXTRA ATTRACTIVE BACKGROUND ANIMATIONS */
+
+@keyframes auroraMove {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  33% { transform: translate3d(40px, -30px, 0) scale(1.08); }
+  66% { transform: translate3d(-35px, 35px, 0) scale(0.96); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.45; filter: blur(45px); }
+  50% { opacity: 0.85; filter: blur(65px); }
+}
+
+@keyframes borderGlow {
+  0%, 100% { box-shadow: 0 0 25px var(--border-c); }
+  50% { box-shadow: 0 0 55px var(--border-v); }
+}
+
+@keyframes softRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* More animated page background */
+.landing-extra-bg {
+  position: fixed;
+  inset: -20%;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(circle at 20% 20%, var(--accent-soft), transparent 30%),
+    radial-gradient(circle at 80% 30%, var(--border-c), transparent 28%),
+    radial-gradient(circle at 50% 80%, var(--border-v), transparent 35%);
+  animation: auroraMove 12s ease-in-out infinite;
+  filter: blur(35px);
+}
+
+/* Apply richer animation to cards */
+.demo-card,
+.feature-card,
+.stats-card {
+  animation:
+    float 6s ease-in-out infinite,
+    borderGlow 4s ease-in-out infinite,
+    fade-up 0.8s ease both;
+}
+
+/* Better hover transition */
+.demo-card:hover,
+.feature-card:hover,
+.stats-card:hover {
+  transform: translateY(-10px) scale(1.025);
+  transition: all 0.35s cubic-bezier(.2,.8,.2,1);
+}
+
+/* Animated logo */
+.landing-nav-logo-icon {
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+/* CTA moving glow */
+.cta-section::before {
+  content: '';
+  position: absolute;
+  width: 520px;
+  height: 520px;
+  border-radius: 50%;
+  background: conic-gradient(from 180deg, rgba(255,255,255,0.25), transparent, var(--border-c), transparent);
+  top: -180px;
+  right: -120px;
+  animation: softRotate 16s linear infinite;
+  filter: blur(10px);
 }

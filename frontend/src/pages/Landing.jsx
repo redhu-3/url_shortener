@@ -1,6 +1,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import './Landing.css';
 
 /* ── Animated floating particle background (retained, recolored) ── */
 function ParticleField({ dark }) {
@@ -38,8 +39,8 @@ function ParticleField({ dark }) {
         ctx.beginPath();
         ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
         ctx.fillStyle = dark
-          ? `rgba(147, 197, 253, ${d.o})`  // sky-300 glow
-          : `rgba(124, 58, 237, ${d.o * 0.8})`;
+          ? `rgba(232, 160, 173, ${d.o})`  // soft rose
+          : `rgba(139, 123, 200, ${d.o * 0.8})`; // lavender
         ctx.fill();
       });
 
@@ -53,8 +54,8 @@ function ParticleField({ dark }) {
             ctx.moveTo(dots[i].x, dots[i].y);
             ctx.lineTo(dots[j].x, dots[j].y);
             ctx.strokeStyle = dark
-              ? `rgba(168, 85, 247, ${0.18 * (1 - dist / 110)})`
-              : `rgba(67, 56, 202, ${0.12 * (1 - dist / 110)})`;
+              ? `rgba(201, 169, 110, ${0.18 * (1 - dist / 110)})` // gold faint
+              : `rgba(91, 184, 154, ${0.12 * (1 - dist / 110)})`; // mint green
             ctx.lineWidth = 0.6;
             ctx.stroke();
           }
@@ -130,37 +131,33 @@ function Counter({ target, duration = 1500, suffix = '' }) {
 
 /* ── Feature card (restyled) ── */
 function FeatureCard({ icon, title, desc, delay, dark }) {
+  const fontD = 'var(--font-d)';
+  const borderCol = 'var(--border)';
+  const hoverBorderCol = 'var(--accent-soft)';
+  const glowCol = 'var(--shadow-glow)';
   return (
     <div
       style={{
-        background: dark
-          ? 'linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)'
-          : 'linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(250,250,255,0.8) 100%)',
-        border: `1px solid ${dark ? 'rgba(168,85,247,0.22)' : 'rgba(124,58,237,0.18)'}`,
+        background: 'linear-gradient(180deg, var(--bg2) 0%, var(--bg1) 100%)',
+        border: `1px solid ${borderCol}`,
         borderRadius: 22,
         padding: '2rem',
         animation: `fadeUp 0.6s ease both`,
         animationDelay: delay,
         transition: 'transform 280ms cubic-bezier(.2,.8,.2,1), box-shadow 280ms, border-color 280ms',
         cursor: 'default',
-        boxShadow: dark
-          ? '0 8px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.05)'
-          : '0 12px 30px rgba(124,58,237,0.12), inset 0 1px 0 rgba(255,255,255,0.8)',
+        boxShadow: 'var(--shadow-lg)',
         backdropFilter: 'blur(10px)',
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = 'translateY(-8px) scale(1.01)';
-        e.currentTarget.style.boxShadow = dark
-          ? '0 18px 60px rgba(168,85,247,0.22), 0 10px 30px rgba(0,0,0,0.45)'
-          : '0 22px 60px rgba(124,58,237,0.18), 0 12px 30px rgba(0,0,0,0.08)';
-        e.currentTarget.style.borderColor = 'var(--accentSoft)';
+        e.currentTarget.style.boxShadow = `0 18px 60px ${glowCol}, var(--shadow-md)`;
+        e.currentTarget.style.borderColor = hoverBorderCol;
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = 'translateY(0) scale(1)';
-        e.currentTarget.style.boxShadow = dark
-          ? '0 8px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.05)'
-          : '0 12px 30px rgba(124,58,237,0.12), inset 0 1px 0 rgba(255,255,255,0.8)';
-        e.currentTarget.style.borderColor = dark ? 'rgba(168,85,247,0.22)' : 'rgba(124,58,237,0.18)';
+        e.currentTarget.style.boxShadow = 'var(--shadow-lg)';
+        e.currentTarget.style.borderColor = borderCol;
       }}
     >
       <div style={{
@@ -168,13 +165,13 @@ function FeatureCard({ icon, title, desc, delay, dark }) {
         background: 'var(--chipBg)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         fontSize: 26, marginBottom: '1.1rem',
-        boxShadow: 'inset 0 0 14px rgba(124,58,237,0.18)',
+        boxShadow: `inset 0 0 14px ${dark ? 'rgba(201,105,122,0.18)' : 'rgba(139,123,200,0.18)'}`,
       }}>
         {icon}
       </div>
       <h3 style={{
         fontSize: '1.15rem', fontWeight: 800, marginBottom: '0.5rem',
-        fontFamily: "'Sora', 'Geist', system-ui, sans-serif",
+        fontFamily: fontD,
         color: 'var(--heading)',
         letterSpacing: '-0.01em',
       }}>{title}</h3>
@@ -199,18 +196,17 @@ function DemoCard({ dark }) {
     }, 900);
   };
 
+  const borderCol = 'var(--border)';
+  const shadowVal = 'var(--shadow-glass)';
+
   return (
     <div style={{
       position: 'relative',
-      background: dark
-        ? 'linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 100%)'
-        : 'linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(250,250,255,0.9) 100%)',
-      border: `1px solid ${dark ? 'rgba(168,85,247,0.35)' : 'rgba(124,58,237,0.2)'}`,
+      background: 'linear-gradient(180deg, var(--bg2) 0%, var(--bg1) 100%)',
+      border: `1px solid ${borderCol}`,
       borderRadius: 26,
       padding: '2rem',
-      boxShadow: dark
-        ? '0 20px 70px rgba(0,0,0,0.55), 0 0 100px rgba(168,85,247,0.18)'
-        : '0 24px 80px rgba(124,58,237,0.16), 0 8px 60px rgba(0,0,0,0.08)',
+      boxShadow: shadowVal,
       animation: 'float 6s ease-in-out infinite, fadeUp 0.8s 0.3s ease both',
       maxWidth: 520,
       width: '100%',
@@ -253,7 +249,7 @@ function DemoCard({ dark }) {
             outline: 'none',
             fontFamily: 'Geist Mono, ui-monospace, SFMono-Regular, Menlo, monospace',
             transition: 'border-color 200ms, box-shadow 200ms, transform 120ms',
-            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)',
+            boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.06)',
           }}
           onFocus={(e) => {
             e.currentTarget.style.borderColor = 'var(--accent)';
@@ -262,7 +258,7 @@ function DemoCard({ dark }) {
           }}
           onBlur={(e) => {
             e.currentTarget.style.borderColor = 'var(--inputBorder)';
-            e.currentTarget.style.boxShadow = 'inset 0 1px 0 rgba(255,255,255,0.06)';
+            e.currentTarget.style.boxShadow = 'inset 0 1px 0 rgba(255, 255, 255, 0.06)';
             e.currentTarget.style.transform = 'translateY(0)';
           }}
         />
@@ -280,19 +276,19 @@ function DemoCard({ dark }) {
             cursor: loading ? 'not-allowed' : 'pointer',
             transition: 'transform 160ms, box-shadow 160ms, filter 160ms',
             whiteSpace: 'nowrap',
-            boxShadow: '0 10px 30px rgba(124,58,237,0.35)',
+            boxShadow: 'var(--shadow-glow)',
             animation: 'gradientShift 5s ease infinite',
           }}
           onMouseEnter={(e) => {
             if (!loading) {
               e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 14px 40px rgba(124,58,237,0.45)';
+              e.currentTarget.style.boxShadow = '0 14px 40px var(--accent-soft)';
               e.currentTarget.style.filter = 'brightness(1.06)';
             }
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = '0 10px 30px rgba(124,58,237,0.35)';
+            e.currentTarget.style.boxShadow = 'var(--shadow-glow)';
             e.currentTarget.style.filter = 'brightness(1)';
           }}
         >
@@ -319,11 +315,11 @@ function DemoCard({ dark }) {
               border: 'none', borderRadius: 10,
               padding: '0.45rem 0.9rem', color: '#fff', fontSize: '0.8rem',
               fontWeight: 800, cursor: 'pointer',
-              boxShadow: '0 8px 24px rgba(124,58,237,0.35)',
+              boxShadow: 'var(--shadow-glow)',
               transition: 'transform 140ms, box-shadow 140ms',
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 12px 28px rgba(124,58,237,0.5)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(124,58,237,0.35)'; }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 12px 28px var(--accent-soft)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'var(--shadow-glow)'; }}
           >
             Copy
           </button>
@@ -357,12 +353,20 @@ function DemoCard({ dark }) {
    MAIN LANDING PAGE
 ══════════════════════════════════════════ */
 export default function Landing() {
-  const [dark, setDark] = useState(true);
+  const [dark, setDark] = useState(() => {
+    try { return (localStorage.getItem('snip-theme') || 'dark') === 'dark'; } catch { return true; }
+  });
 
-  const bg = dark ? '#0a0a0f' : '#faf9ff';
-  const text = dark ? '#f6f7fb' : '#0f1222';
-  const muted = dark ? '#a8acb8' : '#5f6580';
-  const accent = '#7c3aed';
+  useEffect(() => {
+    const val = dark ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', val);
+    try { localStorage.setItem('snip-theme', val); } catch {}
+  }, [dark]);
+
+  const bg = 'var(--bg)';
+  const text = 'var(--text)';
+  const muted = 'var(--text-muted)';
+  const accent = 'var(--accent)';
 
   const features = [
     { icon: '⚡', title: 'Instant Shortening', desc: 'Generate short links in milliseconds with a 7-character nanoid code that is guaranteed unique.' },
@@ -373,32 +377,36 @@ export default function Landing() {
     { icon: '🌐', title: 'Works Anywhere', desc: 'Share links across social, email, or messaging. Every short URL is just one tap away.' },
   ];
 
+  const fontD = 'var(--font-d)';
+  const fontB = 'var(--font-b)';
+
   return (
     <div style={{
-      '--accent': accent,
-      '--accentSoft': dark ? 'rgba(124,58,237,0.55)' : 'rgba(124,58,237,0.45)',
-      '--accentGrad': 'linear-gradient(135deg, #7c3aed, #a855f7 45%, #22d3ee 120%)',
-      '--focusRing': dark ? 'rgba(124,58,237,0.25)' : 'rgba(124,58,237,0.2)',
-      '--muted': muted,
-      '--mutedStrong': dark ? '#c2c6d6' : '#3c4056',
-      '--heading': dark ? '#f2f4ff' : '#0f1222',
-      '--chipBg': dark ? 'rgba(124,58,237,0.16)' : 'rgba(124,58,237,0.1)',
-      '--pillBg': dark ? 'rgba(124,58,237,0.14)' : 'rgba(124,58,237,0.06)',
-      '--pillBorder': dark ? 'rgba(124,58,237,0.32)' : 'rgba(124,58,237,0.2)',
-      '--inputBg': dark ? 'rgba(10,10,16,0.6)' : '#f4f2ff',
-      '--inputBorder': dark ? 'rgba(168,85,247,0.28)' : 'rgba(124,58,237,0.24)',
-      '--statBg': dark ? 'rgba(255,255,255,0.04)' : '#fbfaff',
-      '--statBorder': dark ? 'rgba(255,255,255,0.06)' : 'rgba(15,18,34,0.06)',
+      '--accent': 'var(--accent)',
+      '--accentSoft': 'var(--accent-soft)',
+      '--accentGrad': 'var(--accent-grad)',
+      '--focusRing': 'var(--focus-ring)',
+      '--muted': 'var(--text-muted)',
+      '--mutedStrong': 'var(--text-secondary)',
+      '--heading': 'var(--heading)',
+      '--chipBg': 'var(--chip-bg)',
+      '--pillBg': 'var(--pill-bg)',
+      '--pillBorder': 'var(--pill-border)',
+      '--inputBg': 'var(--input-bg)',
+      '--inputBorder': 'var(--input-border)',
+      '--statBg': 'var(--stat-bg)',
+      '--statBorder': 'var(--stat-border)',
       background: bg,
       color: text,
-      fontFamily: "'Geist', 'Sora', 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif",
+      fontFamily: fontB,
       minHeight: '100vh',
       overflowX: 'hidden',
       transition: 'background 0.4s, color 0.4s',
     }}>
+      <div className="landing-extra-bg" />
 
       <style>{`
-        @import url('[fonts.googleapis.com](https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Geist:wght@400;600;700;800;900&display=swap)');
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;700&display=swap');
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
         html, body, #root { height: 100%; }
@@ -459,16 +467,16 @@ export default function Landing() {
           display: inline-flex;
           align-items: center;
           gap: 10px;
-          box-shadow: 0 14px 40px rgba(124,58,237,0.42);
+          box-shadow: 0 14px 40px ${dark ? 'rgba(201, 105, 122, 0.35)' : 'rgba(139, 123, 200, 0.3)'};
         }
         .btn-primary:hover {
           transform: translateY(-2px);
-          box-shadow: 0 18px 54px rgba(124,58,237,0.52);
+          box-shadow: 0 18px 54px ${dark ? 'rgba(201, 105, 122, 0.45)' : 'rgba(139, 123, 200, 0.42)'};
           filter: brightness(1.06);
         }
         .btn-ghost {
           background: transparent;
-          border: 1.6px solid ${dark ? 'rgba(168,85,247,0.4)' : 'rgba(124,58,237,0.28)'};
+          border: 1.6px solid ${dark ? 'rgba(232, 160, 173, 0.4)' : 'rgba(139, 123, 200, 0.28)'};
           border-radius: 16px;
           padding: 0.95rem 2rem;
           color: ${dark ? '#eaeaf6' : '#2a2c3e'};
@@ -483,39 +491,40 @@ export default function Landing() {
           gap: 10px;
         }
         .btn-ghost:hover {
-          background: ${dark ? 'rgba(168,85,247,0.12)' : 'rgba(124,58,237,0.08)'};
+          background: ${dark ? 'rgba(232, 160, 173, 0.12)' : 'rgba(139, 123, 200, 0.08)'};
           border-color: var(--accent);
           color: var(--accent);
         }
         .nav-link {
           color: ${muted};
           text-decoration: none;
-          font-size: 0.95rem;
-          font-weight: 600;
-          transition: color 160ms, transform 160ms;
-          letter-spacing: 0.01em;
+          font-family: inherit;
+          font-size: 0.9rem;
+          font-weight: 700;
+          transition: color 160ms;
         }
-        .nav-link:hover { color: ${text}; transform: translateY(-1px); }
+        .nav-link:hover {
+          color: var(--accent);
+        }
       `}</style>
-
       {/* ── NAVBAR ── */}
       <nav style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-        background: dark ? 'rgba(5,6,12,0.72)' : 'rgba(255,255,255,0.7)',
+        background: dark ? 'rgba(10,10,10,0.78)' : 'rgba(250,251,255,0.88)',
         backdropFilter: 'blur(20px) saturate(140%)',
-        borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)'}`,
+        borderBottom: `1px solid ${dark ? 'rgba(201,169,110,0.15)' : 'rgba(139,123,200,0.14)'}`,
         transition: 'background 0.4s',
       }}>
         <div style={{ maxWidth: 1220, margin: '0 auto', padding: '0 1.5rem', height: 70, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{
               width: 36, height: 36, borderRadius: 12,
-              background: 'linear-gradient(135deg, #7c3aed, #a855f7 70%, #06b6d4)',
+              background: 'var(--accentGrad)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: 16,
-              boxShadow: '0 0 30px rgba(124,58,237,0.4), inset 0 1px 0 rgba(255,255,255,0.4)',
+              boxShadow: dark ? '0 0 30px rgba(201,105,122,0.3)' : '0 0 30px rgba(139,123,200,0.25)',
             }}>⚡</div>
-            <span style={{ fontWeight: 900, fontSize: '1.15rem', letterSpacing: '-0.02em' }}>
+            <span style={{ fontWeight: 900, fontSize: '1.15rem', letterSpacing: '-0.02em', fontFamily: fontD }}>
               snip<span style={{ color: 'var(--accent)' }}>.ly</span>
             </span>
           </div>
@@ -532,10 +541,11 @@ export default function Landing() {
               onClick={() => setDark(!dark)}
               style={{
                 background: dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
-                border: '1px solid rgba(124,58,237,0.25)', borderRadius: 12, width: 42, height: 42,
+                border: `1px solid ${dark ? 'rgba(201,169,110,0.25)' : 'rgba(139,123,200,0.25)'}`, borderRadius: 12, width: 42, height: 42,
                 cursor: 'pointer', fontSize: 18, transition: 'all 160ms',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 boxShadow: dark ? 'inset 0 1px 0 rgba(255,255,255,0.08)' : 'inset 0 1px 0 rgba(255,255,255,0.8)',
+                color: 'var(--heading)',
               }}
               title="Toggle theme"
               onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-1px)'; }}
@@ -543,10 +553,10 @@ export default function Landing() {
             >
               {dark ? '☀️' : '🌙'}
             </button>
-            <Link to="/login" className="btn-ghost" style={{ padding: '0.65rem 1.2rem', fontSize: '0.9rem' }}>
+            <Link to="/login" className="btn-ghost" style={{ padding: '0.65rem 1.2rem', fontSize: '0.9rem', borderRadius: 12 }}>
               Sign in
             </Link>
-            <Link to="/register" className="btn-primary" style={{ padding: '0.65rem 1.2rem', fontSize: '0.9rem' }}>
+            <Link to="/register" className="btn-primary" style={{ padding: '0.65rem 1.2rem', fontSize: '0.9rem', borderRadius: 12 }}>
               Get started →
             </Link>
           </div>
@@ -557,8 +567,8 @@ export default function Landing() {
       <div style={{
         position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none',
         background: dark
-          ? 'radial-gradient(1200px 600px at 20% 10%, rgba(124,58,237,0.18) 0%, rgba(124,58,237,0.0) 60%), radial-gradient(1000px 500px at 85% 80%, rgba(6,182,212,0.14) 0%, rgba(6,182,212,0.0) 60%)'
-          : 'radial-gradient(1200px 600px at 20% 10%, rgba(124,58,237,0.18) 0%, rgba(124,58,237,0.0) 60%), radial-gradient(1000px 500px at 85% 80%, rgba(79,70,229,0.14) 0%, rgba(79,70,229,0.0) 60%)',
+          ? 'radial-gradient(1200px 600px at 20% 10%, rgba(201,105,122,0.13) 0%, rgba(201,105,122,0) 60%), radial-gradient(1000px 500px at 85% 80%, rgba(201,169,110,0.10) 0%, rgba(201,169,110,0) 60%)'
+          : 'radial-gradient(1200px 600px at 20% 10%, rgba(139,123,200,0.12) 0%, rgba(139,123,200,0) 60%), radial-gradient(1000px 500px at 85% 80%, rgba(91,184,154,0.10) 0%, rgba(91,184,154,0) 60%)',
         maskImage: 'radial-gradient(ellipse at center, black 60%, transparent 100%)'
       }} />
       <ParticleField dark={dark} />
@@ -569,14 +579,18 @@ export default function Landing() {
         <div style={{
           position: 'absolute', top: '12%', left: '8%',
           width: 520, height: 520, borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(124,58,237,0.14) 0%, transparent 70%)',
+          background: dark
+            ? 'radial-gradient(circle, rgba(201,105,122,0.14) 0%, transparent 70%)'
+            : 'radial-gradient(circle, rgba(139,123,200,0.12) 0%, transparent 70%)',
           filter: 'blur(2px)',
           pointerEvents: 'none',
         }} />
         <div style={{
           position: 'absolute', bottom: '8%', right: '8%',
           width: 420, height: 420, borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(6,182,212,0.12) 0%, transparent 70%)',
+          background: dark
+            ? 'radial-gradient(circle, rgba(201,169,110,0.10) 0%, transparent 70%)'
+            : 'radial-gradient(circle, rgba(91,184,154,0.10) 0%, transparent 70%)',
           pointerEvents: 'none',
         }} />
 
@@ -585,15 +599,15 @@ export default function Landing() {
           <div style={{ flex: 1, minWidth: 320 }}>
             <div style={{
               display: 'inline-flex', alignItems: 'center', gap: 10,
-              background: dark ? 'rgba(124,58,237,0.18)' : 'rgba(124,58,237,0.1)',
-              border: '1px solid rgba(124,58,237,0.35)',
+              background: 'var(--chip-bg)',
+              border: `1px solid var(--border-v)`,
               borderRadius: 999, padding: '0.45rem 1rem',
               fontSize: '0.8rem', fontWeight: 800, color: 'var(--accent)',
               marginBottom: '1.5rem', animation: 'fadeUp 0.5s ease both',
               letterSpacing: '0.08em',
               boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.1)',
             }}>
-              <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#22c55e', display: 'inline-block', boxShadow: '0 0 10px #22c55e' }} />
+              <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--emerald)', display: 'inline-block', boxShadow: '0 0 10px var(--emerald)' }} />
               Free · Open Source · Production Ready
             </div>
 
@@ -604,11 +618,11 @@ export default function Landing() {
               letterSpacing: '-0.04em',
               marginBottom: '1.2rem',
               animation: 'fadeUp 0.6s 0.1s ease both',
-              fontFamily: "'Sora', 'Geist', sans-serif",
-              background: 'linear-gradient(180deg, #ffffff, #c7c9ff)',
+              fontFamily: fontD,
+              background: 'linear-gradient(180deg, var(--text-primary), var(--violet-l))',
               WebkitBackgroundClip: 'text',
-              color: dark ? 'transparent' : '#0f1222',
-              textShadow: dark ? '0 0 30px rgba(124,58,237,0.18)' : 'none',
+              color: 'transparent',
+              textShadow: 'var(--shadow-glow)',
             }}>
               Shorten links.<br />
               Track <Typewriter words={['every click.', 'all visits.', 'real analytics.', 'your growth.']} />
@@ -664,33 +678,37 @@ export default function Landing() {
       {/* ── TICKER STRIP ── */}
       <div style={{
         overflow: 'hidden',
-        background: 'var(--accentGrad)',
+        background: 'var(--accent-grad)',
         padding: '0.9rem 0',
         boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.18)',
       }}>
         <div className="ticker-inner" style={{ display: 'flex', gap: '3rem', whiteSpace: 'nowrap' }}>
-          {Array(2).fill(['⚡ Instant short links', '📊 Click analytics', '🔐 Secure accounts', '🔁 Smart redirects', '📱 Mobile friendly', '🌐 Works everywhere', '🗂️ Dashboard view', '💾 Visit history']).flat().map((t, i) => (
-            <span key={i} style={{ fontSize: '0.88rem', fontWeight: 800, color: 'rgba(255,255,255,0.92)', letterSpacing: '0.06em' }}>
+          {Array(2).fill(['⚡ Instant short links', '📊 Click analytics', '🔐 Secure accounts', '🔁 Smart redirects', '📱 Mobile friendly', '🌐 Works everywhere']).flat().map((t, idx) => (
+            <span key={idx} style={{
+              fontSize: '0.85rem', fontWeight: 800,
+              fontFamily: "var(--font-m)",
+              color: '#fff',
+              letterSpacing: '0.04em',
+              display: 'inline-flex', alignItems: 'center', gap: '0.5rem'
+            }}>
               {t}
             </span>
           ))}
         </div>
       </div>
-
-      {/* ── FEATURES ── */}
       <section id="features" style={{ maxWidth: 1220, margin: '0 auto', padding: '6rem 1.5rem' }}>
         <div style={{ textAlign: 'center', marginBottom: '3.3rem' }}>
           <div style={{
             display: 'inline-block',
-            background: dark ? 'rgba(124,58,237,0.18)' : 'rgba(124,58,237,0.1)',
-            border: '1px solid rgba(124,58,237,0.35)',
+            background: dark ? 'rgba(201,105,122,0.16)' : 'rgba(139,123,200,0.12)',
+            border: `1px solid ${dark ? 'rgba(201,105,122,0.35)' : 'rgba(139,123,200,0.25)'}`,
             borderRadius: 999, padding: '0.38rem 1.05rem',
             fontSize: '0.8rem', fontWeight: 800, color: 'var(--accent)',
             marginBottom: '1rem', letterSpacing: '0.08em',
           }}>
             Everything you need
           </div>
-          <h2 style={{ fontSize: 'clamp(1.9rem, 4.2vw, 3rem)', fontWeight: 900, letterSpacing: '-0.03em', marginBottom: '0.8rem', fontFamily: "'Sora', sans-serif" }}>
+          <h2 style={{ fontSize: 'clamp(1.9rem, 4.2vw, 3rem)', fontWeight: 900, letterSpacing: '-0.03em', marginBottom: '0.8rem', fontFamily: fontD }}>
             Packed with powerful features
           </h2>
           <p style={{ color: muted, fontSize: '1.05rem', maxWidth: 560, margin: '0 auto' }}>
@@ -706,14 +724,14 @@ export default function Landing() {
 
       {/* ── HOW IT WORKS ── */}
       <section id="how" style={{
-        background: dark ? 'linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.04))' : 'linear-gradient(180deg, rgba(124,58,237,0.04), rgba(124,58,237,0.06))',
-        borderTop: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'}`,
-        borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'}`,
+        background: dark ? 'linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.04))' : 'linear-gradient(180deg, rgba(139,123,200,0.04), rgba(139,123,200,0.06))',
+        borderTop: `1px solid ${dark ? 'rgba(201,169,110,0.15)' : 'rgba(139,123,200,0.14)'}`,
+        borderBottom: `1px solid ${dark ? 'rgba(201,169,110,0.15)' : 'rgba(139,123,200,0.14)'}`,
         padding: '6rem 1.5rem',
       }}>
         <div style={{ maxWidth: 1220, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '3.3rem' }}>
-            <h2 style={{ fontSize: 'clamp(1.9rem, 4.2vw, 3rem)', fontWeight: 900, letterSpacing: '-0.03em', marginBottom: '0.6rem', fontFamily: "'Sora', sans-serif" }}>
+            <h2 style={{ fontSize: 'clamp(1.9rem, 4.2vw, 3rem)', fontWeight: 900, letterSpacing: '-0.03em', marginBottom: '0.6rem', fontFamily: fontD }}>
               How it works
             </h2>
             <p style={{ color: muted, fontSize: '1.05rem' }}>Three steps, zero friction.</p>
@@ -730,7 +748,7 @@ export default function Landing() {
                   background: 'var(--accentGrad)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: 30, margin: '0 auto 1.2rem',
-                  boxShadow: '0 0 40px rgba(124,58,237,0.45)',
+                  boxShadow: dark ? '0 0 40px rgba(201,105,122,0.35)' : '0 0 40px rgba(139,123,200,0.30)',
                 }}>
                   {step.icon}
                 </div>
@@ -748,7 +766,7 @@ export default function Landing() {
       {/* ── STATS STRIP ── */}
       <section id="stats" style={{ maxWidth: 1220, margin: '0 auto', padding: '6rem 1.5rem' }}>
         <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-          <h2 style={{ fontSize: 'clamp(1.9rem, 4.2vw, 3rem)', fontWeight: 900, letterSpacing: '-0.03em', fontFamily: "'Sora', sans-serif" }}>
+          <h2 style={{ fontSize: 'clamp(1.9rem, 4.2vw, 3rem)', fontWeight: 900, letterSpacing: '-0.03em', fontFamily: fontD }}>
             Trusted by makers worldwide
           </h2>
         </div>
@@ -761,14 +779,15 @@ export default function Landing() {
           ].map((s) => (
             <div key={s.label} style={{
               textAlign: 'center',
-              background: dark ? 'rgba(124,58,237,0.08)' : 'rgba(124,58,237,0.06)',
-              border: `1px solid ${dark ? 'rgba(124,58,237,0.22)' : 'rgba(124,58,237,0.16)'}`,
+              background: dark ? 'rgba(201,105,122,0.08)' : 'rgba(139,123,200,0.06)',
+              border: `1px solid ${dark ? 'rgba(201,105,122,0.22)' : 'rgba(139,123,200,0.16)'}`,
               borderRadius: 22, padding: '2.1rem 1rem',
-              boxShadow: dark ? '0 14px 40px rgba(0,0,0,0.35)' : '0 14px 40px rgba(124,58,237,0.12)',
+              boxShadow: dark ? '0 14px 40px rgba(0,0,0,0.35)' : '0 14px 40px rgba(139,123,200,0.12)',
               backdropFilter: 'blur(6px)',
             }}>
               <div style={{ fontSize: 'clamp(2.1rem, 4.4vw, 3rem)', fontWeight: 900, letterSpacing: '-0.03em',
-                background: 'var(--accentGrad)', WebkitBackgroundClip: 'text', color: 'transparent'
+                background: 'var(--accentGrad)', WebkitBackgroundClip: 'text', color: 'transparent',
+                fontFamily: fontD
               }}>
                 <Counter target={s.target} suffix={s.suffix} />
               </div>
@@ -780,12 +799,12 @@ export default function Landing() {
 
       {/* ── CTA ── */}
       <section style={{
-        background: 'linear-gradient(135deg, #5b21b6 0%, #7c3aed 40%, #06b6d4 100%)',
+        background: 'linear-gradient(135deg, var(--violet-d) 0%, var(--violet) 40%, var(--cyan) 100%)',
         padding: '6rem 1.5rem',
         textAlign: 'center',
         position: 'relative',
         overflow: 'hidden',
-        borderTop: '1px solid rgba(255,255,255,0.12)',
+        borderTop: '1px solid var(--border)',
       }}>
         <div style={{
           position: 'absolute', top: '-50%', left: '30%',
@@ -795,7 +814,7 @@ export default function Landing() {
           filter: 'blur(2px)'
         }} />
         <div style={{ position: 'relative', zIndex: 1 }}>
-          <h2 style={{ fontSize: 'clamp(2.1rem, 5vw, 3.6rem)', fontWeight: 900, color: '#fff', letterSpacing: '-0.035em', marginBottom: '1rem', fontFamily: "'Sora', sans-serif" }}>
+          <h2 style={{ fontSize: 'clamp(2.1rem, 5vw, 3.6rem)', fontWeight: 900, color: '#fff', letterSpacing: '-0.035em', marginBottom: '1rem', fontFamily: fontD }}>
             Ready to shorten smarter?
           </h2>
           <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '1.12rem', marginBottom: '2rem', maxWidth: 520, margin: '0 auto 2rem' }}>
@@ -803,7 +822,7 @@ export default function Landing() {
           </p>
           <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
             <Link to="/register" style={{
-              background: '#fff', color: '#5b21b6',
+              background: '#fff', color: 'var(--violet-d)',
               border: 'none', borderRadius: 16,
               padding: '1rem 2.3rem',
               fontWeight: 900, fontSize: '1rem',
@@ -837,13 +856,13 @@ export default function Landing() {
 
       {/* ── FOOTER ── */}
       <footer style={{
-        borderTop: `1px solid ${dark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)'}`,
+        borderTop: '1px solid var(--border)',
         padding: '2.5rem 1.5rem',
         textAlign: 'center',
-        background: dark ? 'rgba(10,10,16,0.4)' : 'linear-gradient(0deg, #ffffff, #faf9ff)',
+        background: 'var(--nav-bg)',
         backdropFilter: 'blur(6px)',
       }}>
-        <div style={{ fontSize: '1rem', fontWeight: 900, marginBottom: '0.4rem' }}>
+        <div style={{ fontSize: '1rem', fontWeight: 900, marginBottom: '0.4rem', fontFamily: fontD }}>
           ⚡ snip<span style={{ color: 'var(--accent)' }}>.ly</span>
         </div>
         <p style={{ color: muted, fontSize: '0.82rem' }}>

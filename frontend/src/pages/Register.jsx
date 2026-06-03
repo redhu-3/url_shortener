@@ -15,11 +15,11 @@ function getStrength(password) {
   if (/[A-Z]/.test(password)) score++;
   if (/[0-9]/.test(password)) score++;
   if (/[^A-Za-z0-9]/.test(password)) score++;
-  if (score <= 1) return { score, label: 'Weak',   color: '#ef4444' };
-  if (score <= 2) return { score, label: 'Fair',   color: '#f97316' };
-  if (score <= 3) return { score, label: 'Good',   color: '#eab308' };
-  if (score <= 4) return { score, label: 'Strong', color: '#22c55e' };
-  return { score, label: 'Very Strong', color: '#a78bfa' };
+  if (score <= 1) return { score, label: 'Weak',   color: 'var(--error)' };
+  if (score <= 2) return { score, label: 'Fair',   color: 'var(--warning)' };
+  if (score <= 3) return { score, label: 'Good',   color: 'var(--info)' };
+  if (score <= 4) return { score, label: 'Strong', color: 'var(--success)' };
+  return { score, label: 'Very Strong', color: 'var(--accent)' };
 }
 
 export default function Register() {
@@ -203,7 +203,7 @@ export default function Register() {
                   </button>
                 </div>
                 {confirmTouched && !passwordsMatch && (
-                  <p style={{ color: '#ef4444', fontSize: '11px', marginTop: '6px', margin: '6px 0 0' }}>
+                  <p style={{ color: 'var(--violet-d)', fontSize: '11px', marginTop: '6px', margin: '6px 0 0' }}>
                     Passwords don't match
                   </p>
                 )}
@@ -223,8 +223,8 @@ export default function Register() {
                 {loading ? (
                   <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                     <span className="skeleton" style={{
-                      width: '14px', height: '14px', border: '2px solid rgba(255,255,255,0.3)',
-                      borderTop: '2px solid #fff', borderRadius: '50%',
+                      width: '14px', height: '14px', border: '2px solid var(--border)',
+                      borderTop: '2px solid var(--text-primary)', borderRadius: '50%',
                       animation: 'spin-slow 0.7s linear infinite', display: 'inline-block',
                     }} />
                     Creating account…

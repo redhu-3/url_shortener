@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { RiSunLine, RiMoonLine, RiMenuLine, RiCloseLine } from 'react-icons/ri';
+import { useUrls } from '../context/UrlContext';
+import FavouritesDrawer from './FavouritesDrawer';
+import { RiSunLine, RiMoonLine, RiMenuLine, RiCloseLine, RiStarFill } from 'react-icons/ri';
 import './Navbar.css';
 
 /* ── Theme hook ── */
@@ -28,9 +30,13 @@ const NAV_LINKS = [
 /* ══ NAVBAR ══ */
 export default function Navbar() {
   const { user, logout } = useAuth();
+  const { urls } = useUrls();
   const navigate = useNavigate();
   const { theme, toggle } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [favDrawerOpen, setFavDrawerOpen] = useState(false);
+
+  const favCount = urls ? urls.filter(u => u.isFavourite).length : 0;
 
   const handleLogout = () => {
     logout();
@@ -75,6 +81,19 @@ export default function Navbar() {
             {theme === 'dark' ? <RiSunLine /> : <RiMoonLine />}
           </button>
 
+          {/* Favourites Star button */}
+          {user && (
+            <button
+              className="fav-toggle-btn"
+              onClick={() => setFavDrawerOpen(true)}
+              title="View Favourites"
+              aria-label="View Favourites"
+            >
+              <RiStarFill />
+              {favCount > 0 && <span className="fav-badge-nav">{favCount}</span>}
+            </button>
+          )}
+
           {user && (
             <>
               <div className="nav-user">Hey, <span>{user.name}</span></div>
@@ -106,6 +125,8 @@ export default function Navbar() {
           </button>
         </div>
       </nav>
+
+      <FavouritesDrawer isOpen={favDrawerOpen} onClose={() => setFavDrawerOpen(false)} />
 
       {/* Mobile drawer */}
       {mobileOpen && (

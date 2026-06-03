@@ -199,8 +199,8 @@ export default function Login() {
                   {loading ? (
                     <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                       <span className="skeleton" style={{
-                        width: '14px', height: '14px', border: '2px solid rgba(255,255,255,0.3)',
-                        borderTop: '2px solid #fff', borderRadius: '50%',
+                        width: '14px', height: '14px', border: '2px solid var(--border)',
+                        borderTop: '2px solid var(--text-primary)', borderRadius: '50%',
                         animation: 'spin-slow 0.7s linear infinite', display: 'inline-block',
                       }} />
                       Signing in…
