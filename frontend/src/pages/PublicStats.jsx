@@ -134,6 +134,12 @@ function DonutChart({ data, colors, theme }) {
   );
 }
 
+const formatLocalDate = (dateStr) => {
+  if (!dateStr) return '';
+  const [year, month, day] = dateStr.split('-').map(Number);
+  return new Date(year, month - 1, day).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+};
+
 /* ── Click trend chart ── */
 function DailyChart({ chartData, theme }) {
   const ref = useRef(null);
@@ -144,9 +150,7 @@ function DailyChart({ chartData, theme }) {
     if (!chartData || !ref.current) return;
     if (inst.current) inst.current.destroy();
 
-    const labels = chartData.labels.map((d) =>
-      new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-    );
+    const labels = chartData.labels.map((d) => formatLocalDate(d));
 
     inst.current = new Chart(ref.current, {
       type: 'bar',
@@ -230,7 +234,8 @@ export default function PublicStats() {
   const theme = useCurrentTheme();
 
   useEffect(() => {
-    api.get(`/api/url/public/stats/${shortCode}`)
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    api.get(`/api/url/public/stats/${shortCode}?tz=${encodeURIComponent(tz)}`)
       .then(({ data }) => setData(data))
       .catch((err) => setError(err.response?.data?.message || 'Not found or not public'))
       .finally(() => setLoading(false));
@@ -340,7 +345,7 @@ export default function PublicStats() {
                 <h2 style={{ fontFamily: 'var(--font-d)', fontWeight: 750, fontSize: '1.1rem' }}>Clicks Trend — Last 30 Days</h2>
                 {bestDay && (
                   <span className="badge badge-cyan" style={{ fontSize: '0.72rem' }}>
-                    <RiFireLine /> Peak: {new Date(bestDay).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} ({maxDay})
+                    <RiFireLine /> Peak: {formatLocalDate(bestDay)} ({maxDay})
                   </span>
                 )}
               </div>

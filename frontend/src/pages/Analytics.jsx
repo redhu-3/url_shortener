@@ -132,6 +132,12 @@ function DonutChart({ data, colors, theme }) {
   );
 }
 
+const formatLocalDate = (dateStr) => {
+  if (!dateStr) return '';
+  const [year, month, day] = dateStr.split('-').map(Number);
+  return new Date(year, month - 1, day).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+};
+
 /* ── Bar chart (daily clicks) ── */
 function DailyChart({ chartData, theme }) {
   const ref = useRef(null);
@@ -142,9 +148,7 @@ function DailyChart({ chartData, theme }) {
     if (!chartData || !ref.current) return;
     if (inst.current) inst.current.destroy();
 
-    const labels = chartData.labels.map((d) =>
-      new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-    );
+    const labels = chartData.labels.map((d) => formatLocalDate(d));
 
     inst.current = new Chart(ref.current, {
       type: 'bar',
@@ -225,7 +229,8 @@ export default function Analytics() {
   const theme = useCurrentTheme();
 
   useEffect(() => {
-    api.get(`/api/analytics/${urlId}`)
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    api.get(`/api/analytics/${urlId}?tz=${encodeURIComponent(tz)}`)
       .then(({ data }) => setData(data))
       .catch(() => setToast({ message: 'Failed to load analytics', type: 'error' }))
       .finally(() => setLoading(false));
@@ -320,7 +325,7 @@ export default function Analytics() {
                 <h2 style={{ fontFamily: 'var(--font-d)', fontWeight: 750, fontSize: '1.1rem' }}>Clicks — Last 30 Days</h2>
                 {bestDay && (
                   <span className="badge badge-violet" style={{ fontSize: '0.72rem' }}>
-                    <RiFireLine /> Peak: {new Date(bestDay).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} ({maxDay})
+                    <RiFireLine /> Peak: {formatLocalDate(bestDay)} ({maxDay})
                   </span>
                 )}
               </div>

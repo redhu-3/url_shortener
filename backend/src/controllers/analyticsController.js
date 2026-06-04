@@ -2,12 +2,83 @@
 import Url from '../models/Url.js';
 import Visit from '../models/Visit.js';
 
-const buildDays = (n = 30) => {
+const getLocalDateString = (date, tz) => {
+  try {
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: tz || 'UTC',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
+    const parts = formatter.formatToParts(new Date(date));
+    const year = parts.find(p => p.type === 'year').value;
+    const month = parts.find(p => p.type === 'month').value;
+    const day = parts.find(p => p.type === 'day').value;
+    return `${year}-${month}-${day}`;
+  } catch (e) {
+    try {
+      const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'UTC',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      });
+      const parts = formatter.formatToParts(new Date(date));
+      const year = parts.find(p => p.type === 'year').value;
+      const month = parts.find(p => p.type === 'month').value;
+      const day = parts.find(p => p.type === 'day').value;
+      return `${year}-${month}-${day}`;
+    } catch (err2) {
+      return new Date(date).toISOString().slice(0, 10);
+    }
+  }
+};
+
+const buildDays = (tz, n = 30) => {
   const now = new Date();
+  let year, month, day;
+
+  const getParts = (timeZone) => {
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone,
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+    });
+    const parts = formatter.formatToParts(now);
+    return {
+      year: parseInt(parts.find(p => p.type === 'year').value, 10),
+      month: parseInt(parts.find(p => p.type === 'month').value, 10),
+      day: parseInt(parts.find(p => p.type === 'day').value, 10),
+    };
+  };
+
+  try {
+    const p = getParts(tz || 'UTC');
+    year = p.year;
+    month = p.month;
+    day = p.day;
+  } catch (e) {
+    try {
+      const p = getParts('UTC');
+      year = p.year;
+      month = p.month;
+      day = p.day;
+    } catch (err2) {
+      const utcDate = now.toISOString().slice(0, 10).split('-');
+      year = parseInt(utcDate[0], 10);
+      month = parseInt(utcDate[1], 10);
+      day = parseInt(utcDate[2], 10);
+    }
+  }
+
   return Array.from({ length: n }, (_, i) => {
-    const d = new Date(now);
+    const d = new Date(year, month - 1, day);
     d.setDate(d.getDate() - (n - 1 - i));
-    return d.toISOString().slice(0, 10);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const dateDay = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${dateDay}`;
   });
 };
 
@@ -32,11 +103,12 @@ export const getAnalytics = async (req, res) => {
 
     const visits = await Visit.find({ urlId: url._id }).sort({ timestamp: -1 });
 
-    const days30 = buildDays(30);
+    const tz = req.query.tz || 'UTC';
+    const days30 = buildDays(tz, 30);
     const clicksByDay = {};
     days30.forEach((d) => (clicksByDay[d] = 0));
     visits.forEach((v) => {
-      const day = new Date(v.timestamp).toISOString().slice(0, 10);
+      const day = getLocalDateString(v.timestamp, tz);
       if (clicksByDay[day] !== undefined) clicksByDay[day]++;
     });
 
