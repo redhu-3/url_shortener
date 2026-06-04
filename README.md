@@ -211,6 +211,15 @@ Here are the MongoDB collection screenshots showing the database state and schem
 #### 3. Visits Collection (`visits`)
 ![Visits Collection](./OUTPUT_IMAGES/Screenshot%202026-06-04%20101700.png)
 
+-----
+
+
+## Deployment Links
+Frontend deployment link: (https://url-shortener-snowy-iota.vercel.app)
+Backend deployment link: (https://url-shortener-1-mxet.onrender.com)
+
+
+-------------
 ## Demo Video
 
 Watch the complete walkthrough covering user onboarding, link shortening with custom aliases and expiration, bulk CSV upload, live redirection, health check pings, and the interactive analytics dashboard:
