@@ -197,6 +197,20 @@ Here are the output screenshots displaying the UI and core features of the appli
 
 #### 10. Public Statistics
 ![Public Statistics](./OUTPUT_IMAGES/Public%20stats.png)
+
+### Database Collections
+
+Here are the MongoDB collection screenshots showing the database state and schema in MongoDB Atlas:
+
+#### 1. Users Collection (`users`)
+![Users Collection](./OUTPUT_IMAGES/Screenshot%202026-06-04%20101719.png)
+
+#### 2. Urls Collection (`urls`)
+![Urls Collection](./OUTPUT_IMAGES/Screenshot%202026-06-04%20101711.png)
+
+#### 3. Visits Collection (`visits`)
+![Visits Collection](./OUTPUT_IMAGES/Screenshot%202026-06-04%20101700.png)
+
 ## Demo Video
 
 Watch the complete walkthrough covering user onboarding, link shortening with custom aliases and expiration, bulk CSV upload, live redirection, health check pings, and the interactive analytics dashboard:
